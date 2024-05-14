@@ -230,3 +230,85 @@ function recent_posts_by_category_shortcode( $atts ) {
 	return $output;
 }
 add_shortcode( 'recent_posts_by_category', 'recent_posts_by_category_shortcode' );
+
+
+/**Create shortcode
+Add form
+get following data
+name
+company name
+email
+phone
+address
+insert these data in the custom post type 'portfolio' that you've created.
+ **/
+
+// Create shortcode for form
+function portfolio_submission_form_shortcode() {
+	ob_start();
+	?>
+
+	<form id="portfolio_submission_form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+		<input type="hidden" name="action" value="portfolio_submission">
+		<?php wp_nonce_field( 'portfolio_submission_nonce', 'portfolio_submission_nonce_field' ); ?>
+
+		<label for="name">Name:</label>
+		<input type="text" id="name" name="name" required><br><br>
+
+		<label for="company_name">Company Name:</label>
+		<input type="text" id="company_name" name="company_name"><br><br>
+
+		<label for="email">Email:</label>
+		<input type="email" id="email" name="email" required><br><br>
+
+		<label for="phone">Phone:</label>
+		<input type="tel" id="phone" name="phone"><br><br>
+
+		<label for="address">Address:</label>
+		<textarea id="address" name="address"></textarea><br><br>
+
+		<input type="submit" value="Submit">
+	</form>
+
+	<?php
+	return ob_get_clean();
+}
+add_shortcode( 'portfolio_submission_form', 'portfolio_submission_form_shortcode' );
+
+// Process form submission
+function process_portfolio_submission() {
+	if ( isset( $_POST['portfolio_submission_nonce_field'] ) && wp_verify_nonce( $_POST['portfolio_submission_nonce_field'], 'portfolio_submission_nonce' ) ) {
+		if ( isset( $_POST['name'] ) && isset( $_POST['email'] ) ) {
+			$name         = sanitize_text_field( $_POST['name'] );
+			$company_name = sanitize_text_field( $_POST['company_name'] );
+			$email        = sanitize_email( $_POST['email'] );
+			$phone        = sanitize_text_field( $_POST['phone'] );
+			$address      = sanitize_textarea_field( $_POST['address'] );
+
+			// Create post object
+			$portfolio_data = array(
+				'post_title'  => $name,
+				'post_type'   => 'portfolio',
+				'post_status' => 'publish',
+				'meta_input'  => array(
+					'client_name'  => $name,
+					'company_name' => $company_name,
+					'email'        => $email,
+					'phone'        => $phone,
+					'address'      => $address,
+				),
+			);
+
+			// Insert the post into the database
+			$post_id = wp_insert_post( $portfolio_data );
+
+			if ( is_wp_error( $post_id ) ) {
+				echo 'Handle error';
+			} else {
+				echo 'Redirect or display success message';
+			}
+		}
+	}
+}
+add_action( 'admin_post_portfolio_submission', 'process_portfolio_submission' );
+add_action( 'admin_post_nopriv_portfolio_submission', 'process_portfolio_submission' );
