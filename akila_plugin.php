@@ -243,12 +243,18 @@ address
 insert these data in the custom post type 'portfolio' that you've created.
  **/
 
+// Enqueue jQuery in WordPress
+function enqueue_jquery() {
+	wp_enqueue_script( 'jquery' );
+}
+add_action( 'wp_enqueue_scripts', 'enqueue_jquery' );
+
 // Create shortcode for form
 function portfolio_submission_form_shortcode() {
 	ob_start();
 	?>
 
-	<form id="portfolio_submission_form" action="<?php echo esc_url( admin_url( 'admin-post.php' ) ); ?>" method="post">
+	<form id="portfolio_submission_form">
 		<input type="hidden" name="action" value="portfolio_submission">
 		<?php wp_nonce_field( 'portfolio_submission_nonce', 'portfolio_submission_nonce_field' ); ?>
 
@@ -267,8 +273,27 @@ function portfolio_submission_form_shortcode() {
 		<label for="address">Address:</label>
 		<textarea id="address" name="address"></textarea><br><br>
 
-		<input type="submit" value="Submit">
+		<input type="button" id="submit_btn" value="Submit">
 	</form>
+
+	<div id="response_msg"></div>
+
+	<script>
+		jQuery(document).ready(function ($) {
+	$('#submit_btn').on('click', function () {
+		var formData = $('#portfolio_submission_form').serialize();
+		$.ajax({
+			type: 'POST',
+			url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+			data: formData,
+			success: function (response) {
+				$('#response_msg').html(response);
+				$('#portfolio_submission_form')[0].reset(); // Reset the form
+			}
+		});
+	});
+});
+	</script>
 
 	<?php
 	return ob_get_clean();
@@ -301,14 +326,14 @@ function process_portfolio_submission() {
 
 			// Insert the post into the database
 			$post_id = wp_insert_post( $portfolio_data );
-
 			if ( is_wp_error( $post_id ) ) {
-				echo 'Handle error';
+				echo 'Error: ' . esc_html( $post_id->get_error_message() );
 			} else {
-				echo 'Redirect or display success message';
+				echo 'Success! Your portfolio has been submitted.';
 			}
 		}
 	}
+	die();
 }
-add_action( 'admin_post_portfolio_submission', 'process_portfolio_submission' );
-add_action( 'admin_post_nopriv_portfolio_submission', 'process_portfolio_submission' );
+add_action( 'wp_ajax_portfolio_submission', 'process_portfolio_submission' );
+add_action( 'wp_ajax_nopriv_portfolio_submission', 'process_portfolio_submission' );
