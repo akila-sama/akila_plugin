@@ -1,4 +1,5 @@
 <?php
+
 /*
 * Plugin Name: My plugin ajax
 * Description: This is a testing plugin. This plugin is my first plugin.
@@ -76,11 +77,9 @@ add_action( 'wp_ajax_save_custom_data_ajax', 'save_custom_data_ajax' );
 
 
 
-
 /**Custom Post Type: Implement a plugin that registers a custom
 post type, such as "Portfolio" or "Testimonials". Add some custom
 fields to this post type, like "Client Name" and "Project URL".**/
-
 
 // Register Custom Post Type
 function custom_portfolio_post_type() {
@@ -165,11 +164,10 @@ function render_portfolio_fields( $post ) {
 	// Generate nonce field
 	wp_nonce_field( 'save_portfolio_fields', 'portfolio_fields_nonce' );
 }
-
 // Save custom fields data
 function save_custom_fields( $post_id ) {
 	// Verify nonce
-	if ( ! isset( $_POST['my_custom_nonce'] ) || ! wp_verify_nonce( $_POST['my_custom_nonce'], 'my_action' ) ) {
+	if ( ! isset( $_POST['portfolio_fields_nonce'] ) || ! wp_verify_nonce( $_POST['portfolio_fields_nonce'], 'save_portfolio_fields' ) ) {
 		return;
 	}
 
@@ -190,6 +188,7 @@ function save_custom_fields( $post_id ) {
 	}
 }
 add_action( 'save_post', 'save_custom_fields' );
+
 
 /**Shortcode Extension: Extend the functionality of a shortcode.
 For example, create a shortcode that displays a list of recent
@@ -231,5 +230,3 @@ function recent_posts_by_category_shortcode( $atts ) {
 	return $output;
 }
 add_shortcode( 'recent_posts_by_category', 'recent_posts_by_category_shortcode' );
-
-
