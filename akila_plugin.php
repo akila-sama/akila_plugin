@@ -1,11 +1,77 @@
 <?php
-
 /*
-* Plugin Name: My plugin ajax
-* Description: This is a testing plugin. This plugin is my first plugin.
-* Author: akila
-* Version: 1.0
+Plugin Name: My Plugin AJAX
+Plugin URI: https://example.com/my-plugin-ajax
+Description: This plugin allows users to submit their portfolio details through a form and inserts the data into a custom post type 'portfolio'. It also extends the functionality of a shortcode to display recent posts by category.
+Version: 1.0
+Author: akila
+Author URI: https://example.com
+License: GPL-2.0+
+License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+Text Domain: my-plugin-ajax
+Domain Path: /languages
 */
+
+
+
+
+/**Add details and description about your plugin on plugin page
+plugin name
+shortcode name
+functionality of shortcode
+etc
+Design plugin page */
+
+// Add a menu page
+function custom_menu() {
+	add_menu_page(
+		'Plugin Details', // Page title
+		'Plugin Details', // Menu title
+		'manage_options', // Capability
+		'custom-slug', // Menu slug
+		'display_plugin_details', // Callback function to render the page content
+		'dashicons-admin-plugins', // Icon URL or Dashicons class
+		25 // Menu position
+	);
+}
+add_action( 'admin_menu', 'custom_menu' );
+
+// Function to render plugin details
+function display_plugin_details() {
+	?>
+	<div class="wrap">
+		<h2>My Plugin Details</h2>
+		<div class="plugin-info">
+			<p><strong>Plugin Name:</strong> My plugin ajax</p>
+			<p><strong>Description:</strong> This is a testing plugin. This plugin is my first plugin.</p>
+			<p><strong>Author:</strong> akila</p>
+			<p><strong>Version:</strong> 1.0</p>
+		</div>
+
+		<h3>Shortcode Details</h3>
+		<div class="shortcode-info">
+			<p><strong>Shortcode Name:</strong> portfolio_submission_form</p>
+			<p><strong>Functionality:</strong> This shortcode allows users to submit their portfolio details through a form, including name, company name, email, phone, and address. Upon submission, the data is inserted into the custom post type 'portfolio'.</p>
+		</div>
+	</div>
+	<style>
+		.wrap {
+			padding: 20px;
+		}
+
+		.plugin-info, .shortcode-info {
+			background-color: #f9f9f9;
+			border: 1px solid #ddd;
+			padding: 10px;
+			margin-bottom: 20px;
+		}
+
+		.plugin-info strong, .shortcode-info strong {
+			font-weight: bold;
+		}
+	</style>
+	<?php
+}
 
 
 // Add a menu page
@@ -17,7 +83,7 @@ function custom_menu_page() {
 		'custom-page-slug', // Menu slug
 		'custom_page_content', // Callback function to render the page content
 		'dashicons-admin-generic', // Icon URL or Dashicons class
-		25 // Menu position
+		26 // Menu position
 	);
 }
 add_action( 'admin_menu', 'custom_menu_page' );
@@ -243,16 +309,34 @@ address
 insert these data in the custom post type 'portfolio' that you've created.
  **/
 
+
+// Enqueue CSS file
+function enqueue_portfolio_submission_css() {
+	// Get the plugin directory URL
+	$plugin_dir_url = plugin_dir_url( __FILE__ );
+
+	// Enqueue the CSS file
+	wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css' );
+}
+add_action( 'wp_enqueue_scripts', 'enqueue_portfolio_submission_css' );
 // Enqueue jQuery in WordPress
 function enqueue_jquery() {
 	wp_enqueue_script( 'jquery' );
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_jquery' );
 
-// Create shortcode for form
-function portfolio_submission_form_shortcode() {
+function portfolio_submission_form_shortcode( $atts ) {
+	$atts = shortcode_atts(
+		array(
+			'title' => 'portfolio submision from', // Default title
+		),
+		$atts,
+		'portfolio_submission_form'
+	);
+
 	ob_start();
 	?>
+	<h2><?php echo esc_html( $atts['title'] ); ?></h2> <!-- Title added here -->
 
 	<form id="portfolio_submission_form">
 		<input type="hidden" name="action" value="portfolio_submission">
@@ -280,19 +364,30 @@ function portfolio_submission_form_shortcode() {
 
 	<script>
 		jQuery(document).ready(function ($) {
-	$('#submit_btn').on('click', function () {
-		var formData = $('#portfolio_submission_form').serialize();
-		$.ajax({
-			type: 'POST',
-			url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-			data: formData,
-			success: function (response) {
-				$('#response_msg').html(response);
-				$('#portfolio_submission_form')[0].reset(); // Reset the form
-			}
+			$('#submit_btn').on('click', function () {
+				var name = $('#name').val();
+				var company_name = $('#company_name').val();
+				var email = $('#email').val();
+				var phone = $('#phone').val();
+				var address = $('#address').val();
+
+				// Basic form validation
+				if (name.trim() === '' || email.trim() === '' || phone.trim() === '' || address.trim() === '') {
+					$('#response_msg').html('<div class="error">Please fill out all required fields.</div>');
+					return;
+				}
+				var formData = $('#portfolio_submission_form').serialize();
+				$.ajax({
+					type: 'POST',
+					url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+					data: formData,
+					success: function (response) {
+						$('#response_msg').html(response);
+						$('#portfolio_submission_form')[0].reset(); // Reset the form
+					}
+				});
+			});
 		});
-	});
-});
 	</script>
 
 	<?php
