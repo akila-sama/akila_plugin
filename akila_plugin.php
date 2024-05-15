@@ -1,35 +1,82 @@
 <?php
-
 /*
-* Plugin Name: My plugin ajax
-* Description: This is a testing plugin. This plugin is my first plugin.
-* Author: akila
-* Version: 1.0
+Plugin Name: My Plugin AJAX
+Plugin URI: https://example.com/my-plugin-ajax
+Description: This plugin allows users to submit their portfolio details through a form and inserts the data into a custom post type 'portfolio'. It also extends the functionality of a shortcode to display recent posts by category.
+Version: 1.0
+Author: akila
+Author URI: https://example.com
+License: GPL-2.0+
+License URI: http://www.gnu.org/licenses/gpl-2.0.txt
+Text Domain: my-plugin-ajax
+Domain Path: /languages
 */
 
 
+
+
+/**Add details and description about your plugin on plugin page
+plugin name
+shortcode name
+functionality of shortcode
+etc
+Design plugin page */
+
 // Add a menu page
-function custom_menu_page() {
+function custom_menu() {
 	add_menu_page(
-		'ajax Page', // Page title
-		'ajax Page', // Menu title
+		'Plugin Details', // Page title
+		'Plugin Details', // Menu title
 		'manage_options', // Capability
-		'custom-page-slug', // Menu slug
-		'custom_page_content', // Callback function to render the page content
-		'dashicons-admin-generic', // Icon URL or Dashicons class
+		'custom-slug', // Menu slug
+		'display_plugin_details', // Callback function to render the page content
+		'dashicons-admin-plugins', // Icon URL or Dashicons class
 		25 // Menu position
 	);
 }
-add_action( 'admin_menu', 'custom_menu_page' );
+add_action( 'admin_menu', 'custom_menu' );
 
-
-// Function to render the page content
-function custom_page_content() {
-
+// Function to render plugin details
+function display_plugin_details() {
 	?>
 	<div class="wrap">
+		<h2>My Plugin Details</h2>
+		<div class="plugin-info">
+			<p><strong>Plugin Name:</strong> My plugin ajax</p>
+			<p><strong>Description:</strong> This is a testing plugin. This plugin is my first plugin.</p>
+			<p><strong>Author:</strong> akila</p>
+			<p><strong>Version:</strong> 1.0</p>
+		</div>
+
+		<h3>Shortcode Details</h3>
+		<div class="shortcode-info">
+			<p><strong>Shortcode Name:</strong> portfolio_submission_form</p>
+			<p><strong>Functionality:</strong> This shortcode allows users to submit their portfolio details through a form, including name, company name, email, phone, and address. Upon submission, the data is inserted into the custom post type 'portfolio'.</p>
+		<form >
+			<input type="hidden" name="action" value="portfolio_submission">
+			<?php wp_nonce_field( 'portfolio_submission_nonce', 'portfolio_submission_nonce_field' ); ?>
+
+			<label for="name">Name:</label>
+			<input type="text" id="name" name="name" required><br><br>
+
+			<label for="company_name">Company Name:</label>
+			<input type="text" id="company_name" name="company_name"><br><br>
+
+			<label for="email">Email:</label>
+			<input type="email" id="email" name="email" required><br><br>
+
+			<label for="phone">Phone:</label>
+			<input type="tel" id="phone" name="phone"><br><br>
+
+			<label for="address">Address:</label>
+			<textarea id="address" name="address" ></textarea><br><br>
+		</form>
+
+		</div>
+	</div>
+	<div class="wrap">
 		<h2>Custom Page</h2>
-		<form method="post" action="">
+		<form id="custom_data_form" method="post">
 			<!-- Add nonce field to the form -->
 			<?php wp_nonce_field( 'custom_data_nonce', 'custom_data_nonce' ); ?>
 			<label for="custom_data">Enter Custom Data:</label>
@@ -39,10 +86,24 @@ function custom_page_content() {
 		<div id="message"></div>
 		<!-- This div will display the message -->
 	</div>
+	<style>
+		.wrap {
+			padding: 20px;
+		}
 
+		.plugin-info, .shortcode-info {
+			background-color: #f9f9f9;
+			border: 1px solid #ddd;
+			padding: 10px;
+			margin-bottom: 20px;
+		}
+
+		.plugin-info strong, .shortcode-info strong {
+			font-weight: bold;
+		}
+	</style>
 	<?php
 }
-
 
 // AJAX path
 function enqueue_my_plugin_ajax_script() {
@@ -59,7 +120,6 @@ function enqueue_my_plugin_ajax_script() {
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_my_plugin_ajax_script' );
 
-
 // Function to save data to wp-options table via AJAX
 function save_custom_data_ajax() {
 	// Verify nonce
@@ -74,8 +134,6 @@ function save_custom_data_ajax() {
 	wp_die();
 }
 add_action( 'wp_ajax_save_custom_data_ajax', 'save_custom_data_ajax' );
-
-
 
 /**Custom Post Type: Implement a plugin that registers a custom
 post type, such as "Portfolio" or "Testimonials". Add some custom
@@ -242,6 +300,15 @@ phone
 address
 insert these data in the custom post type 'portfolio' that you've created.
  **/
+// Enqueue CSS file
+function enqueue_portfolio_submission_css() {
+	// Get the plugin directory URL
+	$plugin_dir_url = plugin_dir_url( __FILE__ );
+
+	// Enqueue the CSS file
+	wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css' );
+}
+add_action( 'wp_enqueue_scripts', 'enqueue_portfolio_submission_css' );
 
 // Enqueue jQuery in WordPress
 function enqueue_jquery() {
@@ -249,10 +316,18 @@ function enqueue_jquery() {
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_jquery' );
 
-// Create shortcode for form
-function portfolio_submission_form_shortcode() {
+function portfolio_submission_form_shortcode( $atts ) {
+	$atts = shortcode_atts(
+		array(
+			'title' => 'Portfolio Submission Form', // Default title
+		),
+		$atts,
+		'portfolio_submission_form'
+	);
+
 	ob_start();
 	?>
+	<h2><?php echo esc_html( $atts['title'] ); ?></h2> <!-- Title added here -->
 
 	<form id="portfolio_submission_form">
 		<input type="hidden" name="action" value="portfolio_submission">
@@ -264,15 +339,18 @@ function portfolio_submission_form_shortcode() {
 		<label for="company_name">Company Name:</label>
 		<input type="text" id="company_name" name="company_name"><br><br>
 
+		<label for="company_url">Company URL:</label>
+		<input type="url" id="company_url" name="company_url"><br><br>
+
 		<label for="email">Email:</label>
 		<input type="email" id="email" name="email" required><br><br>
 
 		<label for="phone">Phone:</label>
-		<input type="tel" id="phone" name="phone"><br><br>
+		<input type="tel" id="phone" name="phone" required><br><br>
 
 		<label for="address">Address:</label>
-		<textarea id="address" name="address"></textarea><br><br>
-
+		<textarea id="address" name="address" rows="6"></textarea><br><br>
+		
 		<input type="button" id="submit_btn" value="Submit">
 	</form>
 
@@ -280,19 +358,47 @@ function portfolio_submission_form_shortcode() {
 
 	<script>
 		jQuery(document).ready(function ($) {
-	$('#submit_btn').on('click', function () {
-		var formData = $('#portfolio_submission_form').serialize();
-		$.ajax({
-			type: 'POST',
-			url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-			data: formData,
-			success: function (response) {
-				$('#response_msg').html(response);
-				$('#portfolio_submission_form')[0].reset(); // Reset the form
-			}
+			$('#submit_btn').on('click', function () {
+				var name = $('#name').val();
+				var company_name = $('#company_name').val();
+				var company_url = $('#company_url').val();
+				var email = $('#email').val();
+				var phone = $('#phone').val();
+				var address = $('#address').val();
+
+				// Basic form validation
+				if (name.trim() === '' || email.trim() === '' || phone.trim() === '' || address.trim() === '') {
+					$('#response_msg').html('<div class="error">Please fill out all required fields.</div>');
+					return;
+				}
+
+				// Validate email format
+				var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+				if (!emailPattern.test(email)) {
+					$('#response_msg').html('<div class="error">Please enter a valid email address.</div>');
+					return;
+				}
+
+				// Validate phone format (assuming US phone number format)
+				var phonePattern = /^\d{10}$/;
+				if (!phonePattern.test(phone)) {
+					$('#response_msg').html('<div class="error">Please enter a valid 10-digit phone number.</div>');
+					return;
+				}
+
+				var formData = $('#portfolio_submission_form').serializeArray();
+				formData.push({ name: 'company_url', value: company_url });
+				$.ajax({
+					type: 'POST',
+					url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+					data: formData,
+					success: function (response) {
+						$('#response_msg').html(response);
+						$('#portfolio_submission_form')[0].reset(); // Reset the form
+					}
+				});
+			});
 		});
-	});
-});
 	</script>
 
 	<?php
@@ -303,12 +409,21 @@ add_shortcode( 'portfolio_submission_form', 'portfolio_submission_form_shortcode
 // Process form submission
 function process_portfolio_submission() {
 	if ( isset( $_POST['portfolio_submission_nonce_field'] ) && wp_verify_nonce( $_POST['portfolio_submission_nonce_field'], 'portfolio_submission_nonce' ) ) {
-		if ( isset( $_POST['name'] ) && isset( $_POST['email'] ) ) {
+		if ( isset( $_POST['name'] ) && isset( $_POST['email'] ) && isset( $_POST['phone'] ) ) {
 			$name         = sanitize_text_field( $_POST['name'] );
 			$company_name = sanitize_text_field( $_POST['company_name'] );
+			$company_url  = isset( $_POST['company_url'] ) ? esc_url( $_POST['company_url'] ) : '';
 			$email        = sanitize_email( $_POST['email'] );
 			$phone        = sanitize_text_field( $_POST['phone'] );
 			$address      = sanitize_textarea_field( $_POST['address'] );
+
+			// Validate email and phone again to prevent any possible tampering
+			$email_pattern = '/^[^\s@]+@[^\s@]+\.[^\s@]+$/';
+			$phone_pattern = '/^\d{10}$/';
+			if ( ! preg_match( $email_pattern, $email ) || ! preg_match( $phone_pattern, $phone ) ) {
+				echo 'Error: Invalid email or phone number format.';
+				die();
+			}
 
 			// Create post object
 			$portfolio_data = array(
@@ -318,6 +433,7 @@ function process_portfolio_submission() {
 				'meta_input'  => array(
 					'client_name'  => $name,
 					'company_name' => $company_name,
+					'company_url'  => $company_url,
 					'email'        => $email,
 					'phone'        => $phone,
 					'address'      => $address,
@@ -337,3 +453,59 @@ function process_portfolio_submission() {
 }
 add_action( 'wp_ajax_portfolio_submission', 'process_portfolio_submission' );
 add_action( 'wp_ajax_nopriv_portfolio_submission', 'process_portfolio_submission' );
+
+
+
+
+
+/**Custom Columns: Add custom columns to the post list
+screen for your custom post type. **/
+// Add custom columns
+function custom_portfolio_columns( $columns ) {
+	$columns = array(
+		'cb'           => '<input type="checkbox" />',
+		'title'        => __( 'Title' ),
+		'client_name'  => __( 'Client Name' ),
+		'company_name' => __( 'Company Name' ),
+		'email'        => __( 'Email' ),
+		'phone'        => __( 'Phone' ),
+		'address'      => __( 'Address' ),
+		'date'         => __( 'Date' ),
+	);
+	return $columns;
+}
+add_filter( 'manage_portfolio_posts_columns', 'custom_portfolio_columns' );
+// Populate custom columns with data
+function custom_portfolio_columns_data( $column, $post_id ) {
+	switch ( $column ) {
+		case 'client_name':
+			echo esc_html( get_post_meta( $post_id, 'client_name', true ) );
+			break;
+		case 'company_name':
+			echo esc_html( get_post_meta( $post_id, 'company_name', true ) );
+			break;
+		case 'email':
+			echo esc_html( get_post_meta( $post_id, 'email', true ) );
+			break;
+		case 'phone':
+			echo esc_html( get_post_meta( $post_id, 'phone', true ) );
+			break;
+		case 'address':
+			echo esc_html( get_post_meta( $post_id, 'address', true ) );
+			break;
+		default:
+			break;
+	}
+}
+add_action( 'manage_portfolio_posts_custom_column', 'custom_portfolio_columns_data', 10, 2 );
+
+// Make custom columns sortable
+function custom_portfolio_sortable_columns( $columns ) {
+	$columns['client_name']  = 'client_name';
+	$columns['company_name'] = 'company_name';
+	$columns['email']        = 'email';
+	$columns['phone']        = 'phone';
+	$columns['address']      = 'address';
+	return $columns;
+}
+add_filter( 'manage_edit-portfolio_sortable_columns', 'custom_portfolio_sortable_columns' );
