@@ -518,22 +518,22 @@ add_filter( 'manage_edit-portfolio_sortable_columns', 'custom_portfolio_sortable
  * Retrieve posts using REST API.
  * Add button to delete a post using REST API */
 
-
 // Function to render submenu details
+// Update the submenu page callback function to display portfolio posts
 function display_submenu_details() {
 	?>
 	<div class="wrap">
-		<h2>My Submenu Details</h2>
-		<div id="posts-container"></div> <!-- Container to display posts -->
+		<h2>Portfolio Posts</h2>
+		<div id="portfolio-posts-container"></div> <!-- Container to display portfolio posts -->
 		<style>
-			
-			#posts-container th, #posts-container td {
+			#portfolio-posts-container th,
+			#portfolio-posts-container td {
 				padding: 8px;
 				text-align: left;
 				border-bottom: 1px solid #ddd;
 			}
-			
-			#posts-container td button {
+
+			#portfolio-posts-container td button {
 				padding: 5px 10px;
 				background-color: #ff6b6b;
 				color: white;
@@ -541,34 +541,23 @@ function display_submenu_details() {
 				border-radius: 4px;
 				cursor: pointer;
 			}
-			
 		</style>
 	</div>
 	<script>
 		jQuery(document).ready(function($) {
-			// Function to retrieve posts using REST API
-			function getPosts() {
+			// Function to retrieve portfolio posts using AJAX
+			function getPortfolioPosts() {
 				$.ajax({
-					url: submenu_ajax_object.rest_url + 'wp/v2/posts', // REST API endpoint to get posts
-					method: 'GET',
-					beforeSend: function(xhr) {
-						xhr.setRequestHeader('X-WP-Nonce', submenu_ajax_object.nonce); // Add nonce for security
+					url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+					method: 'POST',
+					data: {
+						action: 'get_portfolio_posts'
 					},
 					success: function(response) {
-						if (response.length > 0) {
-							var postsHtml = '<table><tr><th>Title</th><th>Author</th><th>Date</th><th>Action</th></tr>';
-							response.forEach(function(post) {
-								postsHtml += '<tr>';
-								postsHtml += '<td><a href="' + post.link + '">' + post.title.rendered + '</a></td>';
-								postsHtml += '<td>' + post.author_name + '</td>'; // Assuming author name is provided in the response
-								postsHtml += '<td>' + post.date + '</td>'; // Assuming date is provided in the response
-								postsHtml += '<td><button class="delete-post" data-post-id="' + post.id + '">Delete</button></td>';
-								postsHtml += '</tr>';
-							});
-							postsHtml += '</table>';
-							$('#posts-container').html(postsHtml); // Display posts in the container
+						if (response) {
+							$('#portfolio-posts-container').html(response);
 						} else {
-							$('#posts-container').html('<p>No posts found.</p>'); // Display message if no posts found
+							$('#portfolio-posts-container').html('<p>No portfolio posts found.</p>');
 						}
 					},
 					error: function(xhr, status, error) {
@@ -577,26 +566,32 @@ function display_submenu_details() {
 				});
 			}
 
-			// Call function to retrieve posts when the page loads
-			getPosts();
+			// Call function to retrieve portfolio posts when the page loads
+			getPortfolioPosts();
 
-			// Function to handle post deletion
-			$(document).on('click', '.delete-post', function() {
+			// Function to handle portfolio post deletion
+			$(document).on('click', '.delete-portfolio-post', function() {
 				var postId = $(this).data('post-id');
-				if (confirm('Are you sure you want to delete this post?')) {
+				if (confirm('Are you sure you want to delete this portfolio post?')) {
 					$.ajax({
-						url: submenu_ajax_object.rest_url + 'wp/v2/posts/' + postId, // REST API endpoint to delete post
-						method: 'DELETE',
-						beforeSend: function(xhr) {
-							xhr.setRequestHeader('X-WP-Nonce', submenu_ajax_object.nonce); // Add nonce for security
+						url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+						method: 'POST',
+						data: {
+							action: 'delete_portfolio_post',
+							post_id: postId,
+							nonce: submenu_ajax_object.nonce // Pass nonce here
 						},
 						success: function(response) {
-							alert('Post deleted successfully.');
-							getPosts(); // Refresh the list of posts after deletion
+							if (response === 'success') {
+								alert('Portfolio post deleted successfully.');
+								getPortfolioPosts(); // Refresh the list of portfolio posts after deletion
+							} else {
+								alert('Error deleting portfolio post.');
+							}
 						},
 						error: function(xhr, status, error) {
 							console.error(error);
-							alert('Error deleting post.');
+							alert('Error deleting portfolio post.');
 						}
 					});
 				}
@@ -605,6 +600,60 @@ function display_submenu_details() {
 	</script>
 	<?php
 }
+
+// AJAX function to retrieve portfolio posts
+function get_portfolio_posts_callback() {
+	$args = array(
+		'post_type'      => 'portfolio',
+		'posts_per_page' => -1,
+	);
+
+	$query = new WP_Query( $args );
+
+	if ( $query->have_posts() ) {
+		echo '<table><tr><th>Title</th><th>Client Name</th><th>Company Name</th><th>Email</th><th>Phone</th><th>Address</th><th>Date</th><th>Action</th></tr>';
+		while ( $query->have_posts() ) {
+			$query->the_post();
+			echo '<tr>';
+			echo '<td>' . esc_html( get_the_title() ) . '</td>';
+			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'client_name', true ) ) . '</td>';
+			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'company_name', true ) ) . '</td>';
+			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'email', true ) ) . '</td>';
+			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'phone', true ) ) . '</td>';
+			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'address', true ) ) . '</td>';
+			echo '<td>' . esc_html( get_the_date() ) . '</td>';
+			echo '<td><button class="delete-portfolio-post" data-post-id="' . esc_attr( get_the_ID() ) . '">Delete</button></td>';
+
+			echo '</tr>';
+		}
+
+		echo '</table>';
+		wp_reset_postdata();
+	} else {
+		echo '<p>No portfolio posts found.</p>';
+	}
+
+	die();
+}
+add_action( 'wp_ajax_get_portfolio_posts', 'get_portfolio_posts_callback' );
+
+// AJAX function to delete portfolio post
+function delete_portfolio_post_callback() {
+	// Check nonce
+	check_ajax_referer( 'delete_portfolio_post_nonce', 'nonce' );
+
+	if ( isset( $_POST['post_id'] ) ) {
+		// $post_id = intval( $_POST['post_id'] );
+		$post_id = absint( $_POST['post_id'] );
+		wp_delete_post( $post_id );
+		echo 'success';
+	} else {
+		echo 'error';
+	}
+	die();
+}
+add_action( 'wp_ajax_delete_portfolio_post', 'delete_portfolio_post_callback' );
+
 // Add a submenu page
 function custom_submenu() {
 	add_submenu_page(
@@ -627,11 +676,16 @@ function enqueue_submenu_ajax_script() {
 		'submenu_ajax_object',
 		array(
 			'rest_url' => esc_url_raw( rest_url() ),
-			'nonce'    => wp_create_nonce( 'wp_rest' ),
+			'nonce'    => wp_create_nonce( 'delete_portfolio_post_nonce' ), // Create nonce here
 		)
 	);
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_ajax_script' );
+
+
+
+
+
 
 
 /**
