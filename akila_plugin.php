@@ -30,7 +30,7 @@ function custom_menu() {
 		'manage_options', // Capability
 		'custom-slug', // Menu slug
 		'display_plugin_details', // Callback function to render the page content
-		'dashicons-admin-plugins', // Icon URL or Dashicons class
+		'dashicons-text-page', // Icon URL or Dashicons class
 		25 // Menu position
 	);
 }
