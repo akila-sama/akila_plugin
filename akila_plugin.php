@@ -15,6 +15,7 @@ Domain Path: /languages
 
 
 
+
 /**Add details and description about your plugin on plugin page
 plugin name
 shortcode name
@@ -509,3 +510,156 @@ function custom_portfolio_sortable_columns( $columns ) {
 	return $columns;
 }
 add_filter( 'manage_edit-portfolio_sortable_columns', 'custom_portfolio_sortable_columns' );
+
+
+
+
+/** Create a new plugin sub menu:
+ * Retrieve posts using REST API.
+ * Add button to delete a post using REST API */
+
+
+// Function to render submenu details
+function display_submenu_details() {
+	?>
+	<div class="wrap">
+		<h2>My Submenu Details</h2>
+		<div id="posts-container"></div> <!-- Container to display posts -->
+		<style>
+			
+			#posts-container th, #posts-container td {
+				padding: 8px;
+				text-align: left;
+				border-bottom: 1px solid #ddd;
+			}
+			
+			#posts-container td button {
+				padding: 5px 10px;
+				background-color: #ff6b6b;
+				color: white;
+				border: none;
+				border-radius: 4px;
+				cursor: pointer;
+			}
+			
+		</style>
+	</div>
+	<script>
+		jQuery(document).ready(function($) {
+			// Function to retrieve posts using REST API
+			function getPosts() {
+				$.ajax({
+					url: submenu_ajax_object.rest_url + 'wp/v2/posts', // REST API endpoint to get posts
+					method: 'GET',
+					beforeSend: function(xhr) {
+						xhr.setRequestHeader('X-WP-Nonce', submenu_ajax_object.nonce); // Add nonce for security
+					},
+					success: function(response) {
+						if (response.length > 0) {
+							var postsHtml = '<table><tr><th>Title</th><th>Author</th><th>Date</th><th>Action</th></tr>';
+							response.forEach(function(post) {
+								postsHtml += '<tr>';
+								postsHtml += '<td><a href="' + post.link + '">' + post.title.rendered + '</a></td>';
+								postsHtml += '<td>' + post.author_name + '</td>'; // Assuming author name is provided in the response
+								postsHtml += '<td>' + post.date + '</td>'; // Assuming date is provided in the response
+								postsHtml += '<td><button class="delete-post" data-post-id="' + post.id + '">Delete</button></td>';
+								postsHtml += '</tr>';
+							});
+							postsHtml += '</table>';
+							$('#posts-container').html(postsHtml); // Display posts in the container
+						} else {
+							$('#posts-container').html('<p>No posts found.</p>'); // Display message if no posts found
+						}
+					},
+					error: function(xhr, status, error) {
+						console.error(error);
+					}
+				});
+			}
+
+			// Call function to retrieve posts when the page loads
+			getPosts();
+
+			// Function to handle post deletion
+			$(document).on('click', '.delete-post', function() {
+				var postId = $(this).data('post-id');
+				if (confirm('Are you sure you want to delete this post?')) {
+					$.ajax({
+						url: submenu_ajax_object.rest_url + 'wp/v2/posts/' + postId, // REST API endpoint to delete post
+						method: 'DELETE',
+						beforeSend: function(xhr) {
+							xhr.setRequestHeader('X-WP-Nonce', submenu_ajax_object.nonce); // Add nonce for security
+						},
+						success: function(response) {
+							alert('Post deleted successfully.');
+							getPosts(); // Refresh the list of posts after deletion
+						},
+						error: function(xhr, status, error) {
+							console.error(error);
+							alert('Error deleting post.');
+						}
+					});
+				}
+			});
+		});
+	</script>
+	<?php
+}
+// Add a submenu page
+function custom_submenu() {
+	add_submenu_page(
+		'custom-slug', // Parent menu slug
+		'REST API', // Page title
+		'REST API', // Menu title
+		'manage_options', // Capability
+		'custom-submenu-slug', // Menu slug
+		'display_submenu_details' // Callback function to render the page content
+	);
+}
+add_action( 'admin_menu', 'custom_submenu' );
+
+// Enqueue JavaScript file for AJAX request
+function enqueue_submenu_ajax_script() {
+	wp_enqueue_script( 'submenu-ajax-script', plugin_dir_url( __FILE__ ) . 'js/submenu-ajax.js', array( 'jquery' ), '1.0', true );
+	// Localize the script with the REST API endpoint
+	wp_localize_script(
+		'submenu-ajax-script',
+		'submenu_ajax_object',
+		array(
+			'rest_url' => esc_url_raw( rest_url() ),
+			'nonce'    => wp_create_nonce( 'wp_rest' ),
+		)
+	);
+}
+add_action( 'admin_enqueue_scripts', 'enqueue_submenu_ajax_script' );
+
+
+/**
+ *  Extend the WordPress REST API by adding custom endpoints to
+ *  expose additional functionality from your plugin, allowing
+ *  developers to interact with your plugin programmatically.
+ */
+
+// Define callback function for custom endpoint
+function my_custom_endpoint_callback( $data ) {
+	// Your custom logic here
+	$response = array(
+		'message'       => 'This is a custom endpoint response',
+		'data_received' => $data,
+	);
+	return rest_ensure_response( $response );
+}
+
+// Register custom endpoint
+function register_custom_endpoints() {
+	register_rest_route(
+		'v1',
+		'/custom-endpoint/',
+		array(
+			'methods'  => 'GET',
+			'callback' => 'my_custom_endpoint_callback',
+		)
+	);
+	//url http://localhost/wp_plugin_dev/wp-json/v1/custom-endpoint
+}
+add_action( 'rest_api_init', 'register_custom_endpoints' );
