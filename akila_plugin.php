@@ -37,6 +37,7 @@ function custom_menu() {
 }
 add_action( 'admin_menu', 'custom_menu' );
 
+
 // Function to render plugin details
 function display_plugin_details() {
 	?>
@@ -70,9 +71,28 @@ function display_plugin_details() {
 			<input type="tel" id="phone" name="phone"><br><br>
 
 			<label for="address">Address:</label>
-			<textarea id="address" name="address" ></textarea><br><br>
+			<textarea id="address" name="address" rows="6"></textarea><br><br>
 		</form>
-
+		<style>
+			/* Styles for form labels */
+				label {
+				display: block;
+				margin-bottom: 5px;
+				font-weight: bold;
+				}
+			/* Styles for form inputs */
+				input[type="text"],
+				input[type="email"],
+				input[type="tel"],
+				textarea {
+					width: 100%;
+					padding: 10px;
+					margin-bottom: 15px;
+					border: 1px solid #ccc;
+					border-radius: 4px;
+					box-sizing: border-box;
+				}
+		</style>
 		</div>
 	</div>
 	<div class="wrap">
@@ -135,6 +155,7 @@ function save_custom_data_ajax() {
 	wp_die();
 }
 add_action( 'wp_ajax_save_custom_data_ajax', 'save_custom_data_ajax' );
+
 
 /**Custom Post Type: Implement a plugin that registers a custom
 post type, such as "Portfolio" or "Testimonials". Add some custom
@@ -347,7 +368,7 @@ function portfolio_submission_form_shortcode( $atts ) {
 		<input type="email" id="email" name="email" required><br><br>
 
 		<label for="phone">Phone:</label>
-		<input type="tel" id="phone" name="phone" required><br><br>
+		<input type="tel" id="phone" name="phone" maxlength="10" minlength="10" required><br><br>
 
 		<label for="address">Address:</label>
 		<textarea id="address" name="address" rows="6"></textarea><br><br>
@@ -396,6 +417,13 @@ function portfolio_submission_form_shortcode( $atts ) {
 					success: function (response) {
 						$('#response_msg').html(response);
 						$('#portfolio_submission_form')[0].reset(); // Reset the form
+					
+						// Hide success message after 5 seconds
+						setTimeout(function () {
+							$('#response_msg').fadeOut('slow', function () {
+								$(this).html('').show(); // Clear the message and reset fade state
+							});
+						}, 2000); // 5000 milliseconds = 5 seconds
 					}
 				});
 			});
@@ -526,14 +554,7 @@ function display_submenu_details() {
 	<div class="wrap">
 		<h2>Portfolio Posts</h2>
 		<div id="portfolio-posts-container"></div> <!-- Container to display portfolio posts -->
-		<style>
-			#portfolio-posts-container th,
-			#portfolio-posts-container td {
-				padding: 8px;
-				text-align: left;
-				border-bottom: 1px solid #ddd;
-			}
-
+		<style>		
 			#portfolio-posts-container td button {
 				padding: 5px 10px;
 				background-color: #ff6b6b;
@@ -541,6 +562,12 @@ function display_submenu_details() {
 				border: none;
 				border-radius: 4px;
 				cursor: pointer;
+			}
+			#portfolio-posts-container th,
+			#portfolio-posts-container td {
+				padding: 8px;
+				text-align: left;
+				border-bottom: 1px solid #ddd;
 			}
 		</style>
 	</div>
@@ -571,32 +598,32 @@ function display_submenu_details() {
 			getPortfolioPosts();
 
 			// Function to handle portfolio post deletion
-			$(document).on('click', '.delete-portfolio-post', function() {
-				var postId = $(this).data('post-id');
-				if (confirm('Are you sure you want to delete this portfolio post?')) {
-					$.ajax({
-						url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-						method: 'POST',
-						data: {
-							action: 'delete_portfolio_post',
-							post_id: postId,
-							nonce: submenu_ajax_object.nonce // Pass nonce here
-						},
-						success: function(response) {
-							if (response === 'success') {
-								alert('Portfolio post deleted successfully.');
-								getPortfolioPosts(); // Refresh the list of portfolio posts after deletion
-							} else {
-								alert('Error deleting portfolio post.');
-							}
-						},
-						error: function(xhr, status, error) {
-							console.error(error);
-							alert('Error deleting portfolio post.');
-						}
-					});
+$(document).on('click', '.delete-portfolio-post', function() {
+	var postId = $(this).data('post-id');
+	if (confirm('Are you sure you want to delete this portfolio post?')) {
+		$.ajax({
+			url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
+			method: 'POST',
+			data: {
+				action: 'delete_portfolio_post',
+				post_id: postId,
+				nonce: submenu_ajax_object.nonce // Pass nonce here
+			},
+			success: function(response) {
+				if (response === 'success') {
+					$('#portfolio-posts-message').text('Portfolio post deleted successfully.').show();
+					getPortfolioPosts(); // Refresh the list of portfolio posts after deletion
+				} else {
+					alert('Error deleting portfolio post.');
 				}
-			});
+			},
+			error: function(xhr, status, error) {
+				console.error(error);
+				alert('Error deleting portfolio post.');
+			}
+		});
+	}
+});
 		});
 	</script>
 	<?php
