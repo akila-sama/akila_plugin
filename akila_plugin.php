@@ -23,6 +23,13 @@ functionality of shortcode
 etc
 Design plugin page */
 
+
+
+// Enqueue CSS file
+function enqueue_portfolio_submission_form_css() {
+	wp_enqueue_style( 'portfolio-submission-form-style', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css' );
+}
+add_action( 'admin_enqueue_scripts', 'enqueue_portfolio_submission_form_css' );
 // Add a menu page
 function custom_menu() {
 	add_menu_page(
@@ -70,9 +77,8 @@ function display_plugin_details() {
 			<input type="tel" id="phone" name="phone"><br><br>
 
 			<label for="address">Address:</label>
-			<textarea id="address" name="address" ></textarea><br><br>
+			<textarea id="address" name="address" rows="6"></textarea><br><br>
 		</form>
-
 		</div>
 	</div>
 	<div class="wrap">
@@ -87,22 +93,6 @@ function display_plugin_details() {
 		<div id="message"></div>
 		<!-- This div will display the message -->
 	</div>
-	<style>
-		.wrap {
-			padding: 20px;
-		}
-
-		.plugin-info, .shortcode-info {
-			background-color: #f9f9f9;
-			border: 1px solid #ddd;
-			padding: 10px;
-			margin-bottom: 20px;
-		}
-
-		.plugin-info strong, .shortcode-info strong {
-			font-weight: bold;
-		}
-	</style>
 	<?php
 }
 
@@ -135,6 +125,8 @@ function save_custom_data_ajax() {
 	wp_die();
 }
 add_action( 'wp_ajax_save_custom_data_ajax', 'save_custom_data_ajax' );
+
+
 
 /**Custom Post Type: Implement a plugin that registers a custom
 post type, such as "Portfolio" or "Testimonials". Add some custom
@@ -347,7 +339,7 @@ function portfolio_submission_form_shortcode( $atts ) {
 		<input type="email" id="email" name="email" required><br><br>
 
 		<label for="phone">Phone:</label>
-		<input type="tel" id="phone" name="phone" required><br><br>
+		<input type="tel" id="phone" name="phone" maxlength="10" minlength="10" required><br><br>
 
 		<label for="address">Address:</label>
 		<textarea id="address" name="address" rows="6"></textarea><br><br>
@@ -396,6 +388,13 @@ function portfolio_submission_form_shortcode( $atts ) {
 					success: function (response) {
 						$('#response_msg').html(response);
 						$('#portfolio_submission_form')[0].reset(); // Reset the form
+					
+						// Hide success message after 5 seconds
+						setTimeout(function () {
+							$('#response_msg').fadeOut('slow', function () {
+								$(this).html('').show(); // Clear the message and reset fade state
+							});
+						}, 2000); // 5000 milliseconds = 5 seconds
 					}
 				});
 			});
@@ -514,92 +513,38 @@ add_filter( 'manage_edit-portfolio_sortable_columns', 'custom_portfolio_sortable
 
 
 
+
 /** Create a new plugin sub menu:
  * Retrieve posts using REST API.
  * Add button to delete a post using REST API */
 
 // Function to render submenu details
+
+
+// Enqueue CSS file for portfolio submission form
+function enqueue_submenu_css() {
+	wp_enqueue_style( 'portfolio-submission-form', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css' );
+}
+add_action( 'admin_enqueue_scripts', 'enqueue_submenu_css' );
+
+// Enqueue JavaScript file for portfolio functionality
+function enqueue_submenu_js() {
+	wp_enqueue_script( 'akila-plugin-js', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
+}
+add_action( 'admin_enqueue_scripts', 'enqueue_submenu_js' );
+
 // Update the submenu page callback function to display portfolio posts
 function display_submenu_details() {
 	?>
 	<div class="wrap">
 		<h2>Portfolio Posts</h2>
 		<div id="portfolio-posts-container"></div> <!-- Container to display portfolio posts -->
-		<style>
-			#portfolio-posts-container th,
-			#portfolio-posts-container td {
-				padding: 8px;
-				text-align: left;
-				border-bottom: 1px solid #ddd;
-			}
-
-			#portfolio-posts-container td button {
-				padding: 5px 10px;
-				background-color: #ff6b6b;
-				color: white;
-				border: none;
-				border-radius: 4px;
-				cursor: pointer;
-			}
-		</style>
+		<div id="portfolio-posts-message"></div> <!-- Container for success/error messages -->
 	</div>
-	<script>
-		jQuery(document).ready(function($) {
-			// Function to retrieve portfolio posts using AJAX
-			function getPortfolioPosts() {
-				$.ajax({
-					url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-					method: 'POST',
-					data: {
-						action: 'get_portfolio_posts'
-					},
-					success: function(response) {
-						if (response) {
-							$('#portfolio-posts-container').html(response);
-						} else {
-							$('#portfolio-posts-container').html('<p>No portfolio posts found.</p>');
-						}
-					},
-					error: function(xhr, status, error) {
-						console.error(error);
-					}
-				});
-			}
-
-			// Call function to retrieve portfolio posts when the page loads
-			getPortfolioPosts();
-
-			// Function to handle portfolio post deletion
-			$(document).on('click', '.delete-portfolio-post', function() {
-				var postId = $(this).data('post-id');
-				if (confirm('Are you sure you want to delete this portfolio post?')) {
-					$.ajax({
-						url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-						method: 'POST',
-						data: {
-							action: 'delete_portfolio_post',
-							post_id: postId,
-							nonce: submenu_ajax_object.nonce // Pass nonce here
-						},
-						success: function(response) {
-							if (response === 'success') {
-								alert('Portfolio post deleted successfully.');
-								getPortfolioPosts(); // Refresh the list of portfolio posts after deletion
-							} else {
-								alert('Error deleting portfolio post.');
-							}
-						},
-						error: function(xhr, status, error) {
-							console.error(error);
-							alert('Error deleting portfolio post.');
-						}
-					});
-				}
-			});
-		});
-	</script>
 	<?php
 }
+
+
 
 // AJAX function to retrieve portfolio posts
 function get_portfolio_posts_callback() {
@@ -681,9 +626,6 @@ function enqueue_submenu_ajax_script() {
 	);
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_ajax_script' );
-
-
-
 
 
 
