@@ -514,6 +514,7 @@ add_filter( 'manage_edit-portfolio_sortable_columns', 'custom_portfolio_sortable
 
 
 
+
 /** Create a new plugin sub menu:
  * Retrieve posts using REST API.
  * Add button to delete a post using REST API */
