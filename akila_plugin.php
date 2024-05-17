@@ -687,7 +687,6 @@ add_action( 'admin_enqueue_scripts', 'enqueue_submenu_ajax_script' );
 
 
 
-
 /**
  *  Extend the WordPress REST API by adding custom endpoints to
  *  expose additional functionality from your plugin, allowing
