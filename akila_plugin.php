@@ -601,6 +601,7 @@ function display_submenu_details() {
 	<?php
 }
 
+
 // AJAX function to retrieve portfolio posts
 function get_portfolio_posts_callback() {
 	$args = array(
@@ -681,7 +682,6 @@ function enqueue_submenu_ajax_script() {
 	);
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_ajax_script' );
-
 
 
 
