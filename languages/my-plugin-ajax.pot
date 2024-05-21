@@ -1,0 +1,175 @@
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
+"Language-Team: LANGUAGE <LL@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"POT-Creation-Date: 2024-05-21T10:05:47+05:30\n"
+"PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
+"X-Generator: WP-CLI 2.10.0\n"
+"X-Domain: languages\n"
+
+#. Plugin Name of the plugin
+#: akila_plugin.php
+msgid "My Plugin AJAX"
+msgstr ""
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: akila_plugin.php
+msgid "https://example.com"
+msgstr ""
+
+#. Description of the plugin
+#: akila_plugin.php
+msgid "This plugin allows users to submit their portfolio details through a form and inserts the data into a custom post type 'portfolio'. It also extends the functionality of a shortcode to display recent posts by category."
+msgstr ""
+
+#. Author of the plugin
+#: akila_plugin.php
+msgid "akila"
+msgstr ""
+
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Plugin Details"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "REST API"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "My Plugin Details"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Shortcode Details"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Custom Page"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Save"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Plugin Name:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "My plugin ajax"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Description:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "This is a testing plugin. This plugin is my first plugin."
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Author:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "akila"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Version: "
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "1.0"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Shortcode Name: "
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "portfolio_submission_form"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Functionality:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid " This shortcode allows users to submit their portfolio details through a form, including name, company name, email, phone, and address. Upon submission, the data is inserted into the custom post type 'portfolio'."
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Name:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Company Name:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Email:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Phone:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Address:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Enter Custom Data:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Portfolio"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Company URL:"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Submit"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Title"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Client Name"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Company Name"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Email"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "	Phone"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Address"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Date"
+msgstr ""
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Action"
+msgstr ""

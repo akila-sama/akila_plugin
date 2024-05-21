@@ -1,0 +1,185 @@
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"POT-Creation-Date: 2024-05-21T10:05:47+05:30\n"
+"PO-Revision-Date: 2024-05-21 12:08+0530\n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Language: hi_IN\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: Poedit 3.4.3\n"
+"X-Domain: languages\n"
+
+#. Plugin Name of the plugin
+#: akila_plugin.php
+msgid "My Plugin AJAX"
+msgstr "मेरा प्लगइन ajax"
+
+#. Plugin URI of the plugin
+#. Author URI of the plugin
+#: akila_plugin.php
+msgid "https://example.com"
+msgstr "https://example.com"
+
+#. Description of the plugin
+#: akila_plugin.php
+msgid ""
+"This plugin allows users to submit their portfolio details through a form "
+"and inserts the data into a custom post type 'portfolio'. It also extends "
+"the functionality of a shortcode to display recent posts by category."
+msgstr ""
+"यह प्लगइन उपयोगकर्ताओं को एक फॉर्म के माध्यम से अपने पोर्टफोलियो विवरण प्रस्तुत करने "
+"की अनुमति देता है और डेटा को कस्टम पोस्ट प्रकार 'पोर्टफोलियो' में सम्मिलित करता है। "
+"यह श्रेणी के अनुसार हाल के पोस्ट प्रदर्शित करने के लिए एक शॉर्टकोड की कार्यक्षमता का "
+"भी विस्तार करता है।"
+
+#. Author of the plugin
+#: akila_plugin.php wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "akila"
+msgstr "अकीला"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Plugin Details"
+msgstr "प्लगइन विवरण"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "REST API"
+msgstr "बाकी एपीआई"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "My Plugin Details"
+msgstr "मेरा प्लगइन विवरण"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Shortcode Details"
+msgstr "शॉर्टकोड विवरण"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Custom Page"
+msgstr "कस्टम पेज"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Save"
+msgstr "बचाना"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Plugin Name:"
+msgstr "प्लगइन का नाम:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "My plugin ajax"
+msgstr "मेरा प्लगइन ajax"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Description:"
+msgstr "विवरण:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "This is a testing plugin. This plugin is my first plugin."
+msgstr "यह एक परीक्षण प्लगइन है। यह प्लगइन मेरा पहला प्लगइन है।"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Author:"
+msgstr "લેખક:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Version: "
+msgstr "સંસ્કરણ: "
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "1.0"
+msgstr "1.0"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Shortcode Name: "
+msgstr "शोर्टकोड नाम: "
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "portfolio_submission_form"
+msgstr "पोर्टफोलियो_सबमिशन_फॉर्म"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Functionality:"
+msgstr "कार्यक्षमता:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid ""
+" This shortcode allows users to submit their portfolio details through a "
+"form, including name, company name, email, phone, and address. Upon "
+"submission, the data is inserted into the custom post type 'portfolio'."
+msgstr ""
+" यह शॉर्टकोड उपयोगकर्ताओं को एक फॉर्म के माध्यम से अपना पोर्टफोलियो विवरण प्रस्तुत "
+"करने की अनुमति देता है, जिसमें नाम, कंपनी का नाम, ईमेल, फोन और पता शामिल है। प्रस्तुत "
+"करने पर, डेटा को कस्टम पोस्ट प्रकार 'पोर्टफोलियो' में डाला जाता है। "
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Name:"
+msgstr "नाम:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Company Name:"
+msgstr "कंपनी का नाम:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Email:"
+msgstr "ईमेल:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Phone:"
+msgstr "फ़ोन:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Address:"
+msgstr "पता:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Enter Custom Data:"
+msgstr "कस्टम डेटा दर्ज करें:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Portfolio"
+msgstr "पोर्टफोलियो"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Company URL:"
+msgstr "कंपनी यूआरएल:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Submit"
+msgstr "जमा करना"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Title"
+msgstr "शीर्षक"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Client Name"
+msgstr "ग्राहक नाम"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Company Name"
+msgstr "कंपनी का नाम:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Email"
+msgstr "ईमेल:  "
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "\tPhone"
+msgstr "फ़ोन:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Address"
+msgstr "पता:"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Date"
+msgstr "तारीख"
+
+#: wp-content/plugins/custom-plugin/custom-plugin.php
+msgid "Action"
+msgstr "कार्रवाई"
