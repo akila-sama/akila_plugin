@@ -14,8 +14,6 @@ Domain Path: /languages
 
 
 
-
-
 /**Add details and description about your plugin on plugin page
 plugin name
 shortcode name
