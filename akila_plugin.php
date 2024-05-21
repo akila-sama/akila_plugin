@@ -52,54 +52,7 @@ add_action('admin_menu', 'custom_menu');
 
 // Function to render plugin details
 function display_plugin_details() {
-    ?>
-    <div class="wrap">
-        <h2><?php _e('My Plugin Details', 'my-plugin-ajax'); ?></h2>
-        <div class="plugin-info">
-            <p><strong><?php _e('Plugin Name:', 'my-plugin-ajax'); ?></strong> <?php _e('My plugin ajax', 'my-plugin-ajax'); ?></p>
-            <p><strong><?php _e('Description:', 'my-plugin-ajax'); ?></strong> <?php _e('This is a testing plugin. This plugin is my first plugin.', 'my-plugin-ajax'); ?></p>
-            <p><strong><?php _e('Author:', 'my-plugin-ajax'); ?></strong><?php _e('akila', 'my-plugin-ajax'); ?></p>
-            <p><strong><?php _e('Version:', 'my-plugin-ajax'); ?></strong><?php _e('1.0', 'my-plugin-ajax'); ?></p>
-        </div>
-
-        <h3><?php _e('Shortcode Details', 'my-plugin-ajax'); ?></h3>
-        <div class="shortcode-info">
-            <p><strong><?php _e('Shortcode Name:', 'my-plugin-ajax'); ?></strong> <?php _e('portfolio_submission_form')?></p>
-            <p><strong><?php _e('Functionality:', 'my-plugin-ajax'); ?></strong> <?php _e('This shortcode allows users to submit their portfolio details through a form, including name, company name, email, phone, and address. Upon submission, the data is inserted into the custom post type \'portfolio\'.', 'my-plugin-ajax'); ?></p>
-            <form>
-                <input type="hidden" name="action" value="portfolio_submission">
-                <?php wp_nonce_field('portfolio_submission_nonce', 'portfolio_submission_nonce_field'); ?>
-
-                <label for="name"><?php _e('Name:', 'my-plugin-ajax'); ?></label>
-                <input type="text" id="name" name="name" required><br><br>
-
-                <label for="company_name"><?php _e('Company Name:', 'my-plugin-ajax'); ?></label>
-                <input type="text" id="company_name" name="company_name"><br><br>
-
-                <label for="email"><?php _e('Email:', 'my-plugin-ajax'); ?></label>
-                <input type="email" id="email" name="email" required><br><br>
-
-                <label for="phone"><?php _e('Phone:', 'my-plugin-ajax'); ?></label>
-                <input type="tel" id="phone" name="phone"><br><br>
-
-                <label for="address"><?php _e('Address:', 'my-plugin-ajax'); ?></label>
-                <textarea id="address" name="address" rows="6"></textarea><br><br>
-            </form>
-        </div>
-    </div>
-    <div class="wrap">
-        <h2><?php _e('Custom Page', 'my-plugin-ajax'); ?></h2>
-        <form id="custom_data_form" method="post">
-            <!-- Add nonce field to the form -->
-            <?php wp_nonce_field('custom_data_nonce', 'custom_data_nonce'); ?>
-            <label for="custom_data"><?php _e('Enter Custom Data:', 'my-plugin-ajax'); ?></label>
-            <input type="text" id="custom_data" name="custom_data" value="<?php echo esc_attr(get_option('custom_data')); ?>" /><br>
-            <input type="submit" id="submit_custom_data" name="submit_custom_data" class="button-primary" value="<?php _e('Save', 'my-plugin-ajax'); ?>" />
-        </form>
-        <div id="message"></div>
-        <!-- This div will display the message -->
-    </div>
-    <?php
+	include_once(plugin_dir_path(__FILE__) . 'templates/plugin-details.php');
 }
 
 // AJAX path
@@ -209,17 +162,8 @@ add_action('add_meta_boxes', 'add_custom_fields');
 
 // Render custom fields
 function render_portfolio_fields($post) {
-    $client_name = get_post_meta($post->ID, 'client_name', true);
-    $project_url = get_post_meta($post->ID, 'project_url', true);
-    ?>
-    <label for="client_name"><?php _e('Client Name:', 'my-plugin-ajax'); ?></label>
-    <input type="text" id="client_name" name="client_name" value="<?php echo esc_attr($client_name); ?>"><br><br>
-
-    <label for="project_url"><?php _e('Project URL:', 'my-plugin-ajax'); ?></label>
-    <input type="text" id="project_url" name="project_url" value="<?php echo esc_attr($project_url); ?>"><br><br>
-    <?php
-    // Generate nonce field
-    wp_nonce_field('save_portfolio_fields', 'portfolio_fields_nonce');
+	    // Include the template file
+		include(plugin_dir_path(__FILE__) . 'templates/portfolio-fields.php');
 }
 
 // Save custom fields data
@@ -329,34 +273,10 @@ function portfolio_submission_form_shortcode( $atts ) {
 	ob_start();
 	?>
 	<h2><?php echo esc_html( $atts['title'] ); ?></h2> <!-- Title added here -->
-
-	<form id="portfolio_submission_form">
-		<input type="hidden" name="action" value="portfolio_submission">
-		<?php wp_nonce_field( 'portfolio_submission_nonce', 'portfolio_submission_nonce_field' ); ?>
-
-		<label for="name"><?php _e('Name:', 'my-plugin-ajax'); ?></label>
-		<input type="text" id="name" name="name" required><br><br>
-
-		<label for="company_name"><?php _e('Company Name:', 'my-plugin-ajax'); ?></label>
-		<input type="text" id="company_name" name="company_name"><br><br>
-
-		<label for="company_url"><?php _e('Company URL:', 'my-plugin-ajax'); ?></label>
-		<input type="url" id="company_url" name="company_url"><br><br>
-
-		<label for="email"><?php _e('Email:', 'my-plugin-ajax'); ?></label>
-		<input type="email" id="email" name="email" required><br><br>
-
-		<label for="phone"><?php _e('Phone:', 'my-plugin-ajax'); ?></label>
-		<input type="tel" id="phone" name="phone" maxlength="10" minlength="10" required><br><br>
-
-		<label for="address"><?php _e('Address:', 'my-plugin-ajax'); ?></label>
-		<textarea id="address" name="address" rows="6"></textarea><br><br>
-		
-		<input type="button" id="submit_btn" value="Submit">
-	</form>
-
-	<div id="response_msg"></div>
-
+	
+	<!-- html form separate and include it   -->
+	<?php include( plugin_dir_path( __FILE__ ) . 'templates/portfolio-form.php' ); ?>
+	
 	<script>
 		jQuery(document).ready(function ($) {
 			$('#submit_btn').on('click', function () {
@@ -663,9 +583,4 @@ function register_custom_endpoints() {
 	//url http://localhost/wp_plugin_dev/wp-json/v1/custom-endpoint
 }
 add_action( 'rest_api_init', 'register_custom_endpoints' );
-
-
-
-
-
 
