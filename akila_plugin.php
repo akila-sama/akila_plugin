@@ -14,8 +14,6 @@ Domain Path: /languages
 */
 
 
-
-
 /** Add details and description about your plugin on plugin page
  * plugin name
  * shortcode name
@@ -25,28 +23,28 @@ Domain Path: /languages
  */
 
 function my_plugin_load_textdomain() {
-    load_plugin_textdomain('my-plugin-ajax', false, dirname(plugin_basename(__FILE__)) . '/languages');
+	load_plugin_textdomain('my-plugin-ajax', false, dirname(plugin_basename(__FILE__)) . '/languages');
 }
 add_action('plugins_loaded', 'my_plugin_load_textdomain');
 
 
 // Enqueue CSS file
 function enqueue_portfolio_submission_form_css() {
-    wp_enqueue_style('portfolio-submission-form-style', plugin_dir_url(__FILE__) . 'css/portfolio-submission-form.css');
+	wp_enqueue_style('portfolio-submission-form-style', plugin_dir_url(__FILE__) . 'css/portfolio-submission-form.css');
 }
 add_action('admin_enqueue_scripts', 'enqueue_portfolio_submission_form_css');
 
 // Add a menu page
 function custom_menu() {
-    add_menu_page(
-        __('Plugin Details', 'my-plugin-ajax'), // Page title
-        __('Plugin Details', 'my-plugin-ajax'), // Menu title
-        'manage_options', // Capability
-        'custom-slug', // Menu slug
-        'display_plugin_details', // Callback function to render the page content
-        'dashicons-text-page', // Icon URL or Dashicons class
-        25 // Menu position
-    );
+	add_menu_page(
+		__('Plugin Details', 'my-plugin-ajax'), // Page title
+		__('Plugin Details', 'my-plugin-ajax'), // Menu title
+		'manage_options', // Capability
+		'custom-slug', // Menu slug
+		'display_plugin_details', // Callback function to render the page content
+		'dashicons-text-page', // Icon URL or Dashicons class
+		25 // Menu position
+	);
 }
 add_action('admin_menu', 'custom_menu');
 
@@ -57,31 +55,31 @@ function display_plugin_details() {
 
 // AJAX path
 function enqueue_my_plugin_ajax_script() {
-    wp_enqueue_script('my-plugin-ajax-script', plugin_dir_url(__FILE__) . 'js/akila_plugin.js', array('jquery'), '1.0', true);
-    // Localize the script with the AJAX URL and nonce
-    wp_localize_script(
-        'my-plugin-ajax-script',
-        'my_ajax_object',
-        array(
-            'ajaxurl' => admin_url('admin-ajax.php'),
-            'security' => wp_create_nonce('custom_data_nonce'),
-        )
-    );
+	wp_enqueue_script('my-plugin-ajax-script', plugin_dir_url(__FILE__) . 'js/akila_plugin.js', array('jquery'), '1.0', true);
+	// Localize the script with the AJAX URL and nonce
+	wp_localize_script(
+		'my-plugin-ajax-script',
+		'my_ajax_object',
+		array(
+			'ajaxurl' => admin_url('admin-ajax.php'),
+			'security' => wp_create_nonce('custom_data_nonce'),
+		)
+	);
 }
 add_action('admin_enqueue_scripts', 'enqueue_my_plugin_ajax_script');
 
 // Function to save data to wp-options table via AJAX
 function save_custom_data_ajax() {
-    // Verify nonce
-    check_ajax_referer('custom_data_nonce', 'security');
+	// Verify nonce
+	check_ajax_referer('custom_data_nonce', 'security');
 
-    if (isset($_POST['custom_data'])) {
-        update_option('custom_data', $_POST['custom_data']);
-        echo 'success';
-    } else {
-        echo 'error';
-    }
-    wp_die();
+	if (isset($_POST['custom_data'])) {
+		update_option('custom_data', $_POST['custom_data']);
+		echo 'success';
+	} else {
+		echo 'error';
+	}
+	wp_die();
 }
 add_action('wp_ajax_save_custom_data_ajax', 'save_custom_data_ajax');
 
@@ -149,45 +147,45 @@ add_action( 'init', 'custom_portfolio_post_type', 0 );
 
 // Add custom fields to the Portfolio post type
 function add_custom_fields() {
-    add_meta_box(
-        'portfolio_fields',
-        __('Portfolio Item Details', 'my-plugin-ajax'),
-        'render_portfolio_fields',
-        'portfolio',
-        'normal',
-        'default'
-    );
+	add_meta_box(
+		'portfolio_fields',
+		__('Portfolio Item Details', 'my-plugin-ajax'),
+		'render_portfolio_fields',
+		'portfolio',
+		'normal',
+		'default'
+	);
 }
 add_action('add_meta_boxes', 'add_custom_fields');
 
 // Render custom fields
 function render_portfolio_fields($post) {
-	    // Include the template file
+		// Include the template file
 		include(plugin_dir_path(__FILE__) . 'templates/portfolio-fields.php');
 }
 
 // Save custom fields data
 function save_custom_fields($post_id) {
-    // Verify nonce
-    if (!isset($_POST['portfolio_fields_nonce']) || !wp_verify_nonce($_POST['portfolio_fields_nonce'], 'save_portfolio_fields')) {
-        return;
-    }
+	// Verify nonce
+	if (!isset($_POST['portfolio_fields_nonce']) || !wp_verify_nonce($_POST['portfolio_fields_nonce'], 'save_portfolio_fields')) {
+		return;
+	}
 
-    if (array_key_exists('client_name', $_POST)) {
-        update_post_meta(
-            $post_id,
-            'client_name',
-            sanitize_text_field($_POST['client_name'])
-        );
-    }
+	if (array_key_exists('client_name', $_POST)) {
+		update_post_meta(
+			$post_id,
+			'client_name',
+			sanitize_text_field($_POST['client_name'])
+		);
+	}
 
-    if (array_key_exists('project_url', $_POST)) {
-        update_post_meta(
-            $post_id,
-            'project_url',
-            sanitize_text_field($_POST['project_url'])
-        );
-    }
+	if (array_key_exists('project_url', $_POST)) {
+		update_post_meta(
+			$post_id,
+			'project_url',
+			sanitize_text_field($_POST['project_url'])
+		);
+	}
 }
 add_action('save_post', 'save_custom_fields');
 
@@ -255,6 +253,17 @@ function enqueue_portfolio_submission_css() {
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_portfolio_submission_css' );
 
+
+// Enqueue JavaScript file
+function enqueue_akila_plugin_js() {
+    wp_enqueue_script( 'akila-plugin-js-1', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
+
+	wp_localize_script( 'akila-plugin-js-1', 'my_plugin', array(
+		'ajax_url' => admin_url( 'admin-ajax.php' ),
+	) );
+}
+add_action( 'wp_enqueue_scripts', 'enqueue_akila_plugin_js' );
+
 // Enqueue jQuery in WordPress
 function enqueue_jquery() {
 	wp_enqueue_script( 'jquery' );
@@ -277,58 +286,7 @@ function portfolio_submission_form_shortcode( $atts ) {
 	<!-- html form separate and include it   -->
 	<?php include( plugin_dir_path( __FILE__ ) . 'templates/portfolio-form.php' ); ?>
 	
-	<script>
-		jQuery(document).ready(function ($) {
-			$('#submit_btn').on('click', function () {
-				var name = $('#name').val();
-				var company_name = $('#company_name').val();
-				var company_url = $('#company_url').val();
-				var email = $('#email').val();
-				var phone = $('#phone').val();
-				var address = $('#address').val();
-
-				// Basic form validation
-				if (name.trim() === '' || email.trim() === '' || phone.trim() === '' || address.trim() === '') {
-					$('#response_msg').html('<div class="error">Please fill out all required fields.</div>');
-					return;
-				}
-
-				// Validate email format
-				var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-				if (!emailPattern.test(email)) {
-					$('#response_msg').html('<div class="error">Please enter a valid email address.</div>');
-					return;
-				}
-
-				// Validate phone format (assuming US phone number format)
-				var phonePattern = /^\d{10}$/;
-				if (!phonePattern.test(phone)) {
-					$('#response_msg').html('<div class="error">Please enter a valid 10-digit phone number.</div>');
-					return;
-				}
-
-				var formData = $('#portfolio_submission_form').serializeArray();
-				formData.push({ name: 'company_url', value: company_url });
-				$.ajax({
-					type: 'POST',
-					url: '<?php echo esc_url( admin_url( 'admin-ajax.php' ) ); ?>',
-					data: formData,
-					success: function (response) {
-						$('#response_msg').html(response);
-						$('#portfolio_submission_form')[0].reset(); // Reset the form
-					
-						// Hide success message after 5 seconds
-						setTimeout(function () {
-							$('#response_msg').fadeOut('slow', function () {
-								$(this).html('').show(); // Clear the message and reset fade state
-							});
-						}, 2000); // 5000 milliseconds = 5 seconds
-					}
-				});
-			});
-		});
-	</script>
-
+	
 	<?php
 	return ob_get_clean();
 }
@@ -469,7 +427,6 @@ function display_submenu_details() {
 	<?php
 }
 
-
 // AJAX function to retrieve portfolio posts
 function get_portfolio_posts_callback() {
 	$args = array(
@@ -583,4 +540,7 @@ function register_custom_endpoints() {
 	//url http://localhost/wp_plugin_dev/wp-json/v1/custom-endpoint
 }
 add_action( 'rest_api_init', 'register_custom_endpoints' );
+
+
+
 

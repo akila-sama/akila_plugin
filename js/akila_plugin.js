@@ -1,3 +1,4 @@
+//custom page form
 jQuery(document).ready(function($) {
     $("#submit_custom_data").click(function(e) {
         e.preventDefault();
@@ -6,7 +7,7 @@ jQuery(document).ready(function($) {
 
         $.ajax({
             type: "POST",
-            url: my_ajax_object.ajaxurl,
+            url: my_plugin.ajax_url,
             data: {
                 action: "save_custom_data_ajax",
                 custom_data: customData,
@@ -27,12 +28,13 @@ jQuery(document).ready(function($) {
 });
 
 
+
 //rest api
 jQuery(document).ready(function($) {
     // Function to retrieve portfolio posts using AJAX
     function getPortfolioPosts() {
         $.ajax({
-            url: ajaxurl, // Use the global variable ajaxurl for AJAX requests
+            url: my_plugin.ajax_url, // Use the global variable ajaxurl for AJAX requests
             method: "POST",
             data: {
                 action: "get_portfolio_posts",
@@ -60,7 +62,7 @@ jQuery(document).ready(function($) {
         var postId = $(this).data("post-id");
         if (confirm("Are you sure you want to delete this portfolio post?")) {
             $.ajax({
-                url: ajaxurl,
+                url: my_plugin.ajax_url,
                 method: "POST",
                 data: {
                     action: "delete_portfolio_post",
@@ -83,5 +85,58 @@ jQuery(document).ready(function($) {
                 },
             });
         }
+    });
+});
+
+
+
+//form
+jQuery(document).ready(function($) {
+    $('#submit_btn').on('click', function() {
+        var name = $('#name').val();
+        var company_name = $('#company_name').val();
+        var company_url = $('#company_url').val();
+        var email = $('#email').val();
+        var phone = $('#phone').val();
+        var address = $('#address').val();
+
+        // Basic form validation
+        if (name.trim() === '' || email.trim() === '' || phone.trim() === '' || address.trim() === '') {
+            $('#response_msg').html('<div class="error">Please fill out all required fields.</div>');
+            return;
+        }
+
+        // Validate email format
+        var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailPattern.test(email)) {
+            $('#response_msg').html('<div class="error">Please enter a valid email address.</div>');
+            return;
+        }
+
+        // Validate phone format (assuming US phone number format)
+        var phonePattern = /^\d{10}$/;
+        if (!phonePattern.test(phone)) {
+            $('#response_msg').html('<div class="error">Please enter a valid 10-digit phone number.</div>');
+            return;
+        }
+
+        var formData = $('#portfolio_submission_form').serializeArray();
+        formData.push({ name: 'company_url', value: company_url });
+        $.ajax({
+            type: 'POST',
+            url: my_plugin.ajax_url,
+            data: formData,
+            success: function(response) {
+                $('#response_msg').html(response);
+                $('#portfolio_submission_form')[0].reset(); // Reset the form
+
+                // Hide success message after 5 seconds
+                setTimeout(function() {
+                    $('#response_msg').fadeOut('slow', function() {
+                        $(this).html('').show(); // Clear the message and reset fade state
+                    });
+                }, 5000); // 5000 milliseconds = 5 seconds
+            }
+        });
     });
 });
