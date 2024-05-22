@@ -27,8 +27,6 @@ jQuery(document).ready(function($) {
     });
 });
 
-
-
 //rest api
 jQuery(document).ready(function($) {
     // Function to retrieve portfolio posts using AJAX
@@ -87,8 +85,6 @@ jQuery(document).ready(function($) {
         }
     });
 });
-
-
 
 //form
 jQuery(document).ready(function($) {
