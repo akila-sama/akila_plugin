@@ -413,6 +413,9 @@ add_action( 'admin_enqueue_scripts', 'enqueue_submenu_css' );
 // Enqueue JavaScript file for portfolio functionality
 function enqueue_submenu_js() {
 	wp_enqueue_script( 'akila-plugin-js', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
+	wp_localize_script( 'akila-plugin-js', 'my_plugin', array(
+		'ajax_url' => admin_url( 'admin-ajax.php' ),
+	) );
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_js' );
 
