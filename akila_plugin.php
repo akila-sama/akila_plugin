@@ -12,62 +12,67 @@ Text Domain: my-plugin-ajax
 Domain Path: /languages
 */
 
-/** Add details and description about your plugin on plugin page
- * plugin name
- * shortcode name
- * functionality of shortcode
- * etc
- * Design plugin page
+/**
+ * Load plugin text domain for translation.
  */
-
 function my_plugin_load_textdomain() {
 	load_plugin_textdomain( 'my-plugin-ajax', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
 }
 add_action( 'plugins_loaded', 'my_plugin_load_textdomain' );
 
-// Enqueue CSS file
+/**
+ * Enqueue CSS file for portfolio submission form.
+ */
 function enqueue_portfolio_submission_form_css() {
 	wp_enqueue_style( 'portfolio-submission-form-style', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css' );
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_portfolio_submission_form_css' );
 
-// Add a menu page
+/**
+ * Add a menu page.
+ */
 function custom_menu() {
 	add_menu_page(
-		__( 'Plugin Details', 'my-plugin-ajax' ), // Page title
-		__( 'Plugin Details', 'my-plugin-ajax' ), // Menu title
-		'manage_options', // Capability
-		'custom-slug', // Menu slug
-		'display_plugin_details', // Callback function to render the page content
-		'dashicons-text-page', // Icon URL or Dashicons class
-		25 // Menu position
+		__( 'Plugin Details', 'my-plugin-ajax' ), // Page title.
+		__( 'Plugin Details', 'my-plugin-ajax' ), // Menu title.
+		'manage_options', // Capability.
+		'custom-slug', // Menu slug.
+		'display_plugin_details', // Callback function to render the page content.
+		'dashicons-text-page', // Icon URL or Dashicons class.
+		25 // Menu position.
 	);
 }
 add_action( 'admin_menu', 'custom_menu' );
 
-// Function to render plugin details
+/**
+ * Function to render plugin details.
+ */
 function display_plugin_details() {
 	include_once plugin_dir_path( __FILE__ ) . 'templates/plugin-details.php';
 }
 
-// AJAX path
+/**
+ * Enqueue AJAX script.
+ */
 function enqueue_my_plugin_ajax_script() {
 	wp_enqueue_script( 'my-plugin-ajax-script', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), '1.0', true );
-	// Localize the script with the AJAX URL and nonce
 	wp_localize_script(
 		'my-plugin-ajax-script',
 		'my_ajax_object',
 		array(
-			'ajaxurl' => admin_url( 'admin-ajax.php' ),
+			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
 			'security' => wp_create_nonce( 'custom_data_nonce' ),
 		)
 	);
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_my_plugin_ajax_script' );
 
-// Function to save data to wp-options table via AJAX
+/**
+ * Function to save data to wp-options table via AJAX.
+ *
+ * @return void
+ */
 function save_custom_data_ajax() {
-	// Verify nonce
 	check_ajax_referer( 'custom_data_nonce', 'security' );
 
 	if ( isset( $_POST['custom_data'] ) ) {
@@ -80,12 +85,11 @@ function save_custom_data_ajax() {
 }
 add_action( 'wp_ajax_save_custom_data_ajax', 'save_custom_data_ajax' );
 
-
-/**Custom Post Type: Implement a plugin that registers a custom
-post type, such as "Portfolio" or "Testimonials". Add some custom
-fields to this post type, like "Client Name" and "Project URL".**/
-
-// Register Custom Post Type
+/**
+ * Register Custom Post Type.
+ *
+ * @return void
+ */
 function custom_portfolio_post_type() {
 
 	$labels = array(
@@ -141,7 +145,11 @@ function custom_portfolio_post_type() {
 }
 add_action( 'init', 'custom_portfolio_post_type', 0 );
 
-// Add custom fields to the Portfolio post type
+/**
+ * Add custom fields to the Portfolio post type.
+ *
+ * @return void
+ */
 function add_custom_fields() {
 	add_meta_box(
 		'portfolio_fields',
@@ -154,15 +162,22 @@ function add_custom_fields() {
 }
 add_action( 'add_meta_boxes', 'add_custom_fields' );
 
-// Render custom fields
-function render_portfolio_fields( $post ) {
-		// Include the template file
-		include plugin_dir_path( __FILE__ ) . 'templates/portfolio-fields.php';
+/**
+ * Render custom fields.
+ *
+ * @return void
+ */
+function render_portfolio_fields() {
+	include plugin_dir_path( __FILE__ ) . 'templates/portfolio-fields.php';
 }
 
-// Save custom fields data
+/**
+ * Save custom fields data.
+ *
+ * @param int $post_id The ID of the post being saved.
+ * @return void
+ */
 function save_custom_fields( $post_id ) {
-	// Verify nonce
 	if ( ! isset( $_POST['portfolio_fields_nonce'] ) || ! wp_verify_nonce( $_POST['portfolio_fields_nonce'], 'save_portfolio_fields' ) ) {
 		return;
 	}
@@ -185,16 +200,17 @@ function save_custom_fields( $post_id ) {
 }
 add_action( 'save_post', 'save_custom_fields' );
 
-/**Shortcode Extension: Extend the functionality of a shortcode.
-For example, create a shortcode that displays a list of recent
-posts with a specific category.  **/
-
+/**
+ * Shortcode to display recent posts by category.
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string HTML output.
+ */
 function recent_posts_by_category_shortcode( $atts ) {
-	// Extract shortcode attributes
 	$atts = shortcode_atts(
 		array(
 			'category' => '', // default category
-			'count'    => 5,     // default number of posts to display
+			'count'    => 5,   // default number of posts to display
 		),
 		$atts,
 		'recent_posts_by_category'
@@ -226,28 +242,19 @@ function recent_posts_by_category_shortcode( $atts ) {
 }
 add_shortcode( 'recent_posts_by_category', 'recent_posts_by_category_shortcode' );
 
-/**Create shortcode
-Add form
-get following data
-name
-company name
-email
-phone
-address
-insert these data in the custom post type 'portfolio' that you've created.
- **/
-
-// Enqueue CSS file
+/**
+ * Enqueue CSS file for the portfolio submission form.
+ */
 function enqueue_portfolio_submission_css() {
-	// Get the plugin directory URL
 	$plugin_dir_url = plugin_dir_url( __FILE__ );
 
-	// Enqueue the CSS file
 	wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css' );
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_portfolio_submission_css' );
 
-// Enqueue JavaScript file
+/**
+ * Enqueue JavaScript file for the plugin.
+ */
 function enqueue_akila_plugin_js() {
 	wp_enqueue_script( 'akila-plugin-js-1', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
 
@@ -261,12 +268,20 @@ function enqueue_akila_plugin_js() {
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_akila_plugin_js' );
 
-// Enqueue jQuery in WordPress
+/**
+ * Enqueue jQuery in WordPress.
+ */
 function enqueue_jquery() {
 	wp_enqueue_script( 'jquery' );
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_jquery' );
 
+/**
+ * Shortcode for portfolio submission form.
+ *
+ * @param array $atts Shortcode attributes.
+ * @return string HTML content for the portfolio submission form.
+ */
 function portfolio_submission_form_shortcode( $atts ) {
 	$atts = shortcode_atts(
 		array(
@@ -278,17 +293,15 @@ function portfolio_submission_form_shortcode( $atts ) {
 
 	ob_start();
 	?>
-	<h2><?php echo esc_html( $atts['title'] ); ?></h2> <!-- Title added here -->
-	
-	<!-- html form separate and include it   -->
 	<?php include plugin_dir_path( __FILE__ ) . 'templates/portfolio-form.php'; ?>
-
 	<?php
 	return ob_get_clean();
 }
 add_shortcode( 'portfolio_submission_form', 'portfolio_submission_form_shortcode' );
 
-// Process form submission
+/**
+ * Process portfolio submission form.
+ */
 function process_portfolio_submission() {
 	if ( isset( $_POST['portfolio_submission_nonce_field'] ) && wp_verify_nonce( $_POST['portfolio_submission_nonce_field'], 'portfolio_submission_nonce' ) ) {
 		if ( isset( $_POST['name'] ) && isset( $_POST['email'] ) && isset( $_POST['phone'] ) ) {
@@ -299,7 +312,7 @@ function process_portfolio_submission() {
 			$phone        = sanitize_text_field( $_POST['phone'] );
 			$address      = sanitize_textarea_field( $_POST['address'] );
 
-			// Validate email and phone again to prevent any possible tampering
+			// Validate email and phone
 			$email_pattern = '/^[^\s@]+@[^\s@]+\.[^\s@]+$/';
 			$phone_pattern = '/^\d{10}$/';
 			if ( ! preg_match( $email_pattern, $email ) || ! preg_match( $phone_pattern, $phone ) ) {
@@ -307,7 +320,7 @@ function process_portfolio_submission() {
 				die();
 			}
 
-			// Create post object
+			// Create portfolio post
 			$portfolio_data = array(
 				'post_title'  => $name,
 				'post_type'   => 'portfolio',
@@ -322,7 +335,7 @@ function process_portfolio_submission() {
 				),
 			);
 
-			// Insert the post into the database
+			// Insert post into the database
 			$post_id = wp_insert_post( $portfolio_data );
 			if ( is_wp_error( $post_id ) ) {
 				echo 'Error: ' . esc_html( $post_id->get_error_message() );
@@ -336,25 +349,33 @@ function process_portfolio_submission() {
 add_action( 'wp_ajax_portfolio_submission', 'process_portfolio_submission' );
 add_action( 'wp_ajax_nopriv_portfolio_submission', 'process_portfolio_submission' );
 
-/**Custom Columns: Add custom columns to the post list
-screen for your custom post type. **/
-// Add custom columns
-
+/**
+ * Customize portfolio columns.
+ *
+ * @param array $columns Existing columns.
+ * @return array Modified columns.
+ */
 function custom_portfolio_columns( $columns ) {
 	$columns = array(
 		'cb'           => '<input type="checkbox" />',
-		'title'        => __( 'Title', 'my-plugin-ajax' ),
-		'client_name'  => __( 'Client Name', 'my-plugin-ajax' ),
-		'company_name' => __( 'Company Name', 'my-plugin-ajax' ),
-		'email'        => __( 'Email', 'my-plugin-ajax' ),
-		'phone'        => __( 'Phone', 'my-plugin-ajax' ),
-		'address'      => __( 'Address', 'my-plugin-ajax' ),
-		'date'         => __( 'Date', 'my-plugin-ajax' ),
+		'title'        => __( 'Title', 'akila-plugin' ),
+		'client_name'  => __( 'Client Name', 'akila-plugin' ),
+		'company_name' => __( 'Company Name', 'akila-plugin' ),
+		'email'        => __( 'Email', 'akila-plugin' ),
+		'phone'        => __( 'Phone', 'akila-plugin' ),
+		'address'      => __( 'Address', 'akila-plugin' ),
+		'date'         => __( 'Date', 'akila-plugin' ),
 	);
 	return $columns;
 }
 add_filter( 'manage_portfolio_posts_columns', 'custom_portfolio_columns' );
-// Populate custom columns with data
+
+/**
+ * Populate custom columns with data.
+ *
+ * @param string $column The name of the column.
+ * @param int $post_id The ID of the post.
+ */
 function custom_portfolio_columns_data( $column, $post_id ) {
 	switch ( $column ) {
 		case 'client_name':
@@ -378,7 +399,12 @@ function custom_portfolio_columns_data( $column, $post_id ) {
 }
 add_action( 'manage_portfolio_posts_custom_column', 'custom_portfolio_columns_data', 10, 2 );
 
-// Make custom columns sortable
+/**
+ * Make custom columns sortable.
+ *
+ * @param array $columns The columns.
+ * @return array The modified columns.
+ */
 function custom_portfolio_sortable_columns( $columns ) {
 	$columns['client_name']  = 'client_name';
 	$columns['company_name'] = 'company_name';
@@ -389,22 +415,20 @@ function custom_portfolio_sortable_columns( $columns ) {
 }
 add_filter( 'manage_edit-portfolio_sortable_columns', 'custom_portfolio_sortable_columns' );
 
-/** Create a new plugin sub menu:
- * Retrieve posts using REST API.
- * Add button to delete a post using REST API */
-
-// Function to render submenu details
-
-// Enqueue CSS file for portfolio submission form
+/**
+ * Enqueue CSS file for portfolio submission form.
+ */
 function enqueue_submenu_css() {
 	wp_enqueue_style( 'portfolio-submission-form', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css' );
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_css' );
 
-// Enqueue JavaScript file for portfolio functionality
+/**
+ * Enqueue JavaScript file for portfolio functionality.
+ */
 function enqueue_submenu_js() {
 	wp_enqueue_script( 'akila-plugin-js', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
-	//js code is not displayed then uses localization
+
 	wp_localize_script(
 		'akila-plugin-js',
 		'my_plugin',
@@ -415,7 +439,9 @@ function enqueue_submenu_js() {
 }
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_js' );
 
-// Update the submenu page callback function to display portfolio posts
+/**
+ * Update the submenu page callback function to display portfolio posts.
+ */
 function display_submenu_details() {
 	?>
 	<div class="wrap">
@@ -426,7 +452,9 @@ function display_submenu_details() {
 	<?php
 }
 
-// AJAX function to retrieve portfolio posts
+/**
+ * AJAX function to retrieve portfolio posts.
+ */
 function get_portfolio_posts_callback() {
 	$args = array(
 		'post_type'      => 'portfolio',
@@ -436,7 +464,7 @@ function get_portfolio_posts_callback() {
 	$query = new WP_Query( $args );
 
 	if ( $query->have_posts() ) {
-		echo '<table><tr><th>' . esc_html__( 'Title', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Client Name', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Company Name', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Email', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Phone', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Address', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Date', 'my-plugin-ajax' ) . '</th><th>' . esc_html__( 'Action', 'my-plugin-ajax' ) . '</th></tr>';
+		include_once plugin_dir_path( __FILE__ ) . 'templates/retrieve-portfolio-posts.php';
 
 		while ( $query->have_posts() ) {
 			$query->the_post();
@@ -448,7 +476,7 @@ function get_portfolio_posts_callback() {
 			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'phone', true ) ) . '</td>';
 			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'address', true ) ) . '</td>';
 			echo '<td>' . esc_html( get_the_date() ) . '</td>';
-			echo '<td><button class="delete-portfolio-post" data-post-id="' . esc_attr( get_the_ID() ) . '">' . __('Delete', 'my-plugin-ajax') . '</button></td>';
+			echo '<td><button class="delete-portfolio-post" data-post-id="' . esc_attr( get_the_ID() ) . '">' . esc_html__( 'Delete', 'my-plugin-ajax' ) . '</button></td>';
 
 			echo '</tr>';
 		}
@@ -463,9 +491,12 @@ function get_portfolio_posts_callback() {
 }
 add_action( 'wp_ajax_get_portfolio_posts', 'get_portfolio_posts_callback' );
 
-// AJAX function to delete portfolio post
+/**
+ * AJAX function to delete portfolio post.
+ *
+ * @return void
+ */
 function delete_portfolio_post_callback() {
-	// Check nonce
 	check_ajax_referer( 'delete_portfolio_post_nonce', 'nonce' );
 
 	if ( isset( $_POST['post_id'] ) ) {
@@ -479,7 +510,11 @@ function delete_portfolio_post_callback() {
 }
 add_action( 'wp_ajax_delete_portfolio_post', 'delete_portfolio_post_callback' );
 
-// Add a submenu page
+/**
+ * Add a submenu page.
+ *
+ * @return void
+ */
 function custom_submenu() {
 	add_submenu_page(
 		'custom-slug', // Parent menu slug
@@ -492,10 +527,13 @@ function custom_submenu() {
 }
 add_action( 'admin_menu', 'custom_submenu' );
 
-// Enqueue JavaScript file for AJAX request
+/**
+ * Enqueue JavaScript file for AJAX request.
+ *
+ * @return void
+ */
 function enqueue_submenu_ajax_script() {
 	wp_enqueue_script( 'submenu-ajax-script', plugin_dir_url( __FILE__ ) . 'js/submenu-ajax.js', array( 'jquery' ), '1.0', true );
-	// Localize the script with the REST API endpoint
 	wp_localize_script(
 		'submenu-ajax-script',
 		'submenu_ajax_object',
@@ -508,14 +546,12 @@ function enqueue_submenu_ajax_script() {
 add_action( 'admin_enqueue_scripts', 'enqueue_submenu_ajax_script' );
 
 /**
- *  Extend the WordPress REST API by adding custom endpoints to
- *  expose additional functionality from your plugin, allowing
- *  developers to interact with your plugin programmatically.
+ * Define callback function for custom endpoint.
+ *
+ * @param WP_REST_Request $data The request data.
+ * @return WP_REST_Response The response data.
  */
-
-// Define callback function for custom endpoint
 function my_custom_endpoint_callback( $data ) {
-	// Your custom logic here
 	$response = array(
 		'message'       => 'This is a custom endpoint response',
 		'data_received' => $data,
@@ -523,7 +559,11 @@ function my_custom_endpoint_callback( $data ) {
 	return rest_ensure_response( $response );
 }
 
-// Register custom endpoint
+/**
+ * Register custom REST API endpoint.
+ *
+ * @return void
+ */
 function register_custom_endpoints() {
 	register_rest_route(
 		'v1',

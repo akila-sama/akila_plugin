@@ -1,8 +1,3 @@
-
-<!-- akila_plugin.php code html separate here =
-function render_portfolio_fields($post)
--->
-
 <label for="client_name"><?php esc_html_e( 'Client Name:', 'my-plugin-ajax' ); ?></label>
 <input type="text" id="client_name" name="client_name" value="<?php echo esc_attr( $client_name ); ?>"><br><br>
 

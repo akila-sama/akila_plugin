@@ -1,4 +1,5 @@
 <!-- templates/portfolio-form.php -->
+<h2><?php echo esc_html( $atts['title'] ); ?></h2> <!-- Title added here -->
 <form id="portfolio_submission_form">
 	<input type="hidden" name="action" value="portfolio_submission">
 	<?php wp_nonce_field( 'portfolio_submission_nonce', 'portfolio_submission_nonce_field' ); ?>
