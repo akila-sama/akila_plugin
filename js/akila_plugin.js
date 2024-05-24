@@ -95,7 +95,7 @@ jQuery(document).ready(function ($) {
 	/**
 	 * Handles click event on delete portfolio post button.
 	 */
-	$(document).off("click", ".delete-portfolio-post").on("click", ".delete-portfolio-post", function () {
+	$(document).off( "click", ".delete-portfolio-post" ).on("click", ".delete-portfolio-post", function () {
 		var postId = $(this).data("post-id");
 		if (confirm("Are you sure you want to delete this portfolio post?")) {
 			$.ajax({
