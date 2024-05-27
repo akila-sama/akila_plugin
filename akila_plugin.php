@@ -1,89 +1,15 @@
 <?php
-/*
-Plugin Name: Akila Plugin 
-Plugin URI: https://example.com/my-plugin-ajax
-Description: This plugin allows users to submit their portfolio details through a form and inserts the data into a custom post type 'portfolio'. It also extends the functionality of a shortcode to display recent posts by category.
-Version: 1.0
-Author: akila
-Author URI: https://example.com
-License: GPL-2.0+
-License URI: http://www.gnu.org/licenses/gpl-2.0.txt
-Text Domain: my-plugin-ajax
-Domain Path: /languages
-*/
-
 /**
- * Load plugin text domain for translation.
+ * Plugin Name: Akila Plugin
+ * Description: Description of your plugin.
+ * Version: 1.0
+ * Author: Your Name
+ * Text Domain: my-plugin-ajax
  */
-function ak_plugin_load_textdomain() {
-	load_plugin_textdomain( 'my-plugin-ajax', false, dirname( plugin_basename( __FILE__ ) ) . '/languages' );
-}
-add_action( 'plugins_loaded', 'ak_plugin_load_textdomain' );
 
-/**
- * Enqueue CSS file for portfolio submission form.
- */
-function ak_enqueue_portfolio_submission_form_css() {
-	wp_enqueue_style( 'portfolio-submission-form-style', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css' );
-}
-add_action( 'admin_enqueue_scripts', 'ak_enqueue_portfolio_submission_form_css' );
-
-/**
- * Add a menu page.
- */
-function ak_custom_menu() {
-	add_menu_page(
-		__( 'Plugin Details', 'my-plugin-ajax' ), // Page title.
-		__( 'Plugin Details', 'my-plugin-ajax' ), // Menu title.
-		'manage_options', // Capability.
-		'custom-slug', // Menu slug.
-		'ak_display_plugin_details', // Callback function to render the page content.
-		'dashicons-text-page', // Icon URL or Dashicons class.
-		25 // Menu position.
-	);
-}
-add_action( 'admin_menu', 'ak_custom_menu' );
-
-/**
- * Function to render plugin details.
- */
-function ak_display_plugin_details() {
-	include_once plugin_dir_path( __FILE__ ) . 'templates/plugin-details.php';
-}
-
-/**
- * Enqueue AJAX script.
- */
-function ak_enqueue_my_plugin_ajax_script() {
-	wp_enqueue_script( 'my-plugin-ajax-script', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), '1.0', true );
-	wp_localize_script(
-		'my-plugin-ajax-script',
-		'my_ajax_object',
-		array(
-			'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-			'security' => wp_create_nonce( 'custom_data_nonce' ),
-		)
-	);
-}
-add_action( 'admin_enqueue_scripts', 'ak_enqueue_my_plugin_ajax_script' );
-
-/**
- * Function to save data to wp-options table via AJAX.
- *
- * @return void
- */
-function ak_save_custom_data_ajax() {
-	check_ajax_referer( 'custom_data_nonce', 'security' );
-
-	if ( isset( $_POST['custom_data'] ) ) {
-		update_option( 'custom_data', $_POST['custom_data'] );
-		echo 'success';
-	} else {
-		echo 'error';
-	}
-	wp_die();
-}
-add_action( 'wp_ajax_save_custom_data_ajax', 'ak_save_custom_data_ajax' );
+// Include necessary files.
+require_once plugin_dir_path( __FILE__ ) . 'includes/admin-functions.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/ajax-functions.php';
 
 /**
  * Register Custom Post Type.
