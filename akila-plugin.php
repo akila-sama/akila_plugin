@@ -8,7 +8,7 @@
  */
 
 
- //this is is commnet
+
 
 // Include necessary files.
 require_once plugin_dir_path( __FILE__ ) . 'includes/admin-functions.php';
