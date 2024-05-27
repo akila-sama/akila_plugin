@@ -169,30 +169,30 @@ function ak_recent_posts_by_category_shortcode( $atts ) {
 add_shortcode( 'recent_posts_by_category', 'ak_recent_posts_by_category_shortcode' );
 
 /**
- * Enqueue CSS file for portfolio submission form.
+ * Enqueue CSS file for the portfolio submission form on the front-end only.
  */
 function ak_enqueue_portfolio_submission_css() {
-	$plugin_dir_url = plugin_dir_url( __FILE__ );
-
-	// Enqueue CSS only on the page where the shortcode is used
-	if ( is_page( 'your_portfolio_submission_page_slug' ) ) {
+	if ( ! is_admin() ) {
+		$plugin_dir_url = plugin_dir_url( __FILE__ );
 		wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css', array(), '1.0' );
 	}
 }
 add_action( 'wp_enqueue_scripts', 'ak_enqueue_portfolio_submission_css' );
+
 /**
- * Enqueue JavaScript file for the plugin.
+ * Enqueue JavaScript file for the plugin on the front-end only.
  */
 function enqueue_akila_plugin_js() {
-	wp_enqueue_script( 'akila-portfolio-js-1', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
-
-	wp_localize_script(
-		'akila-portfolio-js-1',
-		'my_plugin',
-		array(
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-		)
-	);
+	if ( ! is_admin() ) {
+		wp_enqueue_script( 'akila-portfolio-js-1', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
+		wp_localize_script(
+			'akila-portfolio-js-1',
+			'my_plugin',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+			)
+		);
+	}
 }
 add_action( 'wp_enqueue_scripts', 'enqueue_akila_plugin_js' );
 
@@ -344,29 +344,31 @@ function ak_custom_portfolio_sortable_columns( $columns ) {
 add_filter( 'manage_edit-portfolio_sortable_columns', 'ak_custom_portfolio_sortable_columns' );
 
 /**
- * Enqueue CSS file for portfolio submission form.
+ * Enqueue CSS file for portfolio submission form in the admin area only.
  */
 function ak_enqueue_submenu_css() {
-	wp_enqueue_style( 'portfolio-submission-form', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css', array(), '1.0' );
+	if ( is_admin() ) {
+		wp_enqueue_style( 'portfolio-submission-form', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css', array(), '1.0' );
+	}
 }
 add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_css' );
 
 /**
- * Enqueue JavaScript file for portfolio functionality.
+ * Enqueue JavaScript file for portfolio functionality in the admin area only.
  */
 function ak_enqueue_submenu_js() {
-	wp_enqueue_script( 'akila-portfolio-js', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
-
-	wp_localize_script(
-		'akila-portfolio-js',
-		'my_plugin',
-		array(
-			'ajax_url' => admin_url( 'admin-ajax.php' ),
-		)
-	);
+	if ( is_admin() ) {
+		wp_enqueue_script( 'akila-portfolio-js', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0.0', true );
+		wp_localize_script(
+			'akila-portfolio-js',
+			'my_plugin',
+			array(
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+			)
+		);
+	}
 }
 add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_js' );
-
 
 /**
  * Update the submenu page callback function to display portfolio posts.
@@ -457,22 +459,23 @@ function ak_custom_submenu() {
 add_action( 'admin_menu', 'ak_custom_submenu' );
 
 /**
- * Enqueue JavaScript file for AJAX request.
- *
- * @return void
+ * Enqueue JavaScript file for AJAX request in the admin area only.
  */
 function ak_enqueue_submenu_ajax_script() {
-	wp_enqueue_script( 'submenu-ajax-script', plugin_dir_url( __FILE__ ) . 'js/submenu-ajax.js', array( 'jquery' ), '1.0', true );
-	wp_localize_script(
-		'submenu-ajax-script',
-		'submenu_ajax_object',
-		array(
-			'rest_url' => esc_url_raw( rest_url() ),
-			'nonce'    => wp_create_nonce( 'delete_portfolio_post_nonce' ), // Create nonce here
-		)
-	);
+	if ( is_admin() ) {
+		wp_enqueue_script( 'submenu-ajax-script', plugin_dir_url( __FILE__ ) . 'js/submenu-ajax.js', array( 'jquery' ), '1.0', true );
+		wp_localize_script(
+			'submenu-ajax-script',
+			'submenu_ajax_object',
+			array(
+				'rest_url' => esc_url_raw( rest_url() ),
+				'nonce'    => wp_create_nonce( 'delete_portfolio_post_nonce' ),
+			)
+		);
+	}
 }
 add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_ajax_script' );
+
 /**
  * Define callback function for custom endpoint.
  *
