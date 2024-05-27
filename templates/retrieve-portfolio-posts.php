@@ -1,12 +1,12 @@
 <table>
 	<tr>
-	<th><?php echo esc_html__( 'Title', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Client Name', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Company Name', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Email', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Phone', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Address', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Date', 'my-plugin-ajax' ); ?></th>
-	<th><?php echo esc_html__( 'Action', 'my-plugin-ajax' ); ?></th>
+	<th><?php echo esc_html__( 'Title', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Client Name', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Company Name', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Email', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Phone', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Address', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Date', 'akila-portfolio' ); ?></th>
+	<th><?php echo esc_html__( 'Action', 'akila-portfolio' ); ?></th>
 	</tr>
 
