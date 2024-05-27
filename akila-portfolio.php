@@ -167,16 +167,19 @@ function ak_recent_posts_by_category_shortcode( $atts ) {
 	return $output;
 }
 add_shortcode( 'recent_posts_by_category', 'ak_recent_posts_by_category_shortcode' );
+
 /**
- * Enqueue CSS file for the portfolio submission form.
+ * Enqueue CSS file for portfolio submission form.
  */
 function ak_enqueue_portfolio_submission_css() {
 	$plugin_dir_url = plugin_dir_url( __FILE__ );
 
-	wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css', array(), '1.0' );
+	// Enqueue CSS only on the page where the shortcode is used
+	if ( is_page( 'your_portfolio_submission_page_slug' ) ) {
+		wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css', array(), '1.0' );
+	}
 }
 add_action( 'wp_enqueue_scripts', 'ak_enqueue_portfolio_submission_css' );
-
 /**
  * Enqueue JavaScript file for the plugin.
  */
