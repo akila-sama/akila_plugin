@@ -1,4 +1,4 @@
-<!-- akila_plugin.php code html separate here -->
+<!-- akila-plugin.php code html separate here -->
 
 <div class="wrap">
 	<h2><?php esc_html_e( 'My Plugin Details', 'my-plugin-ajax' ); ?></h2>

@@ -182,7 +182,7 @@ add_action( 'wp_enqueue_scripts', 'ak_enqueue_portfolio_submission_css' );
  * Enqueue JavaScript file for the plugin.
  */
 function enqueue_akila_plugin_js() {
-	wp_enqueue_script( 'akila-plugin-js-1', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
+	wp_enqueue_script( 'akila-plugin-js-1', plugin_dir_url( __FILE__ ) . 'js/akila-plugin.js', array( 'jquery' ), null, true );
 
 	wp_localize_script(
 		'akila-plugin-js-1',
@@ -353,7 +353,7 @@ add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_css' );
  * Enqueue JavaScript file for portfolio functionality.
  */
 function ak_enqueue_submenu_js() {
-	wp_enqueue_script( 'akila-plugin-js', plugin_dir_url( __FILE__ ) . 'js/akila_plugin.js', array( 'jquery' ), null, true );
+	wp_enqueue_script( 'akila-plugin-js', plugin_dir_url( __FILE__ ) . 'js/akila-plugin.js', array( 'jquery' ), null, true );
 
 	wp_localize_script(
 		'akila-plugin-js',
