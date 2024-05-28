@@ -1,9 +1,9 @@
 <?php
 /**
  * Plugin Name: Akila Portfolio
- * Description: Description of your plugin.
+ * Description: Akila Portfolio is a comprehensive portfolio management plugin for WordPress. It allows users to create and manage portfolio items with custom fields, display recent posts by category, and submit portfolio items via a front-end form. It includes AJAX-based functionalities, custom REST API endpoints, and admin page enhancements.
  * Version: 1.0
- * Author: Your Name
+ * Author: Akila
  * Text Domain: akila-portfolio
  */
 
@@ -169,10 +169,23 @@ function ak_recent_posts_by_category_shortcode( $atts ) {
 add_shortcode( 'recent_posts_by_category', 'ak_recent_posts_by_category_shortcode' );
 
 /**
- * Enqueue CSS file for the portfolio submission form on the front-end only.
+ * Check if the shortcode exists in the content.
+ *
+ * @param string $shortcode Shortcode to check for.
+ * @return bool True if the shortcode exists, false otherwise.
+ */
+function ak_has_shortcode( $shortcode ) {
+	global $post;
+	if ( is_a( $post, 'WP_Post' ) && has_shortcode( $post->post_content, $shortcode ) ) {
+		return true;
+	}
+	return false;
+}
+/**
+ * Enqueue CSS file for the portfolio submission form on the front-end only if the shortcode is present.
  */
 function ak_enqueue_portfolio_submission_css() {
-	if ( ! is_admin() ) {
+	if ( ! is_admin() && ak_has_shortcode( 'portfolio_submission_form' ) ) {
 		$plugin_dir_url = plugin_dir_url( __FILE__ );
 		wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . 'css/portfolio-submission-form.css', array(), '1.0' );
 	}
@@ -180,10 +193,10 @@ function ak_enqueue_portfolio_submission_css() {
 add_action( 'wp_enqueue_scripts', 'ak_enqueue_portfolio_submission_css' );
 
 /**
- * Enqueue JavaScript file for the plugin on the front-end only.
+ * Enqueue JavaScript file for the plugin on the front-end only if the shortcode is present.
  */
 function enqueue_akila_plugin_js() {
-	if ( ! is_admin() ) {
+	if ( ! is_admin() && ak_has_shortcode( 'portfolio_submission_form' ) ) {
 		wp_enqueue_script( 'akila-portfolio-js-1', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
 		wp_localize_script(
 			'akila-portfolio-js-1',
@@ -506,3 +519,20 @@ function ak_register_custom_endpoints() {
 	);
 }
 add_action( 'rest_api_init', 'ak_register_custom_endpoints' );
+
+/**
+ * Add a custom button next to the Deactivate button on the plugins page.
+ *
+ * @param array $links Existing action links.
+ * @return array Modified action links.
+ */
+function ak_add_custom_plugin_button( $links ) {
+	$custom_plugin_page = admin_url( 'admin.php?page=custom-slug' );
+
+	// Add the custom button link.
+	$custom_link = '<a href="' . esc_url( $custom_plugin_page ) . '" class="button">Custom Button</a>';
+	array_unshift( $links, $custom_link );
+
+	return $links;
+}
+add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'ak_add_custom_plugin_button' );

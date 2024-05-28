@@ -1,3 +1,13 @@
+<?php
+/**
+ * Retrieve Portfolio Posts Template
+ *
+ * This template file is used to display the retrieved portfolio posts in a tabular format.
+ *
+ * @package Akila_Portfolio
+ */
+?>
+
 <table>
 	<tr>
 	<th><?php echo esc_html__( 'Title', 'akila-portfolio' ); ?></th>
