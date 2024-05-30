@@ -200,7 +200,7 @@ function enqueue_akila_plugin_js() {
 		wp_enqueue_script( 'akila-portfolio-js-1', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
 		wp_localize_script(
 			'akila-portfolio-js-1',
-			'my_plugin',
+			'ak_my_plugin',
 			array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 			)
@@ -356,25 +356,47 @@ function ak_custom_portfolio_sortable_columns( $columns ) {
 }
 add_filter( 'manage_edit-portfolio_sortable_columns', 'ak_custom_portfolio_sortable_columns' );
 
+
+// function ak_enqueue_submenu_css() {
+
+//      wp_enqueue_style( 'portfolio-submission-form', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css', array(), '1.0' );
+// }
+// add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_css' );
+
+// function ak_enqueue_submenu_js() {
+//      wp_enqueue_script( 'akila-portfolio-js', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0.0', true );
+//      wp_localize_script(
+//          'akila-portfolio-js',
+//          'ak_my_plugin',
+//          array(
+//              'ajax_url' => admin_url( 'admin-ajax.php' ),
+//          )
+//      );
+// }
+// add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_js' );
+
+
 /**
- * Enqueue CSS file for portfolio submission form in the admin area only.
+ * Enqueue CSS file for plugin details and REST API page in the admin area.
  */
 function ak_enqueue_submenu_css() {
-	if ( is_admin() ) {
+	$screen = get_current_screen();
+	if ( $screen && ( 'toplevel_page_custom-slug' === $screen->id || 'plugin-details_page_custom-submenu-slug' === $screen->id ) ) {
 		wp_enqueue_style( 'portfolio-submission-form', plugin_dir_url( __FILE__ ) . 'css/portfolio-submission-form.css', array(), '1.0' );
 	}
 }
 add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_css' );
 
 /**
- * Enqueue JavaScript file for portfolio functionality in the admin area only.
+ * Enqueue JavaScript file for plugin details and REST API page in the admin area.
  */
 function ak_enqueue_submenu_js() {
-	if ( is_admin() ) {
+	$screen = get_current_screen();
+	if ( $screen && ( 'toplevel_page_custom-slug' === $screen->id || 'plugin-details_page_custom-submenu-slug' === $screen->id ) ) {
 		wp_enqueue_script( 'akila-portfolio-js', plugin_dir_url( __FILE__ ) . 'js/akila-portfolio.js', array( 'jquery' ), '1.0.0', true );
 		wp_localize_script(
 			'akila-portfolio-js',
-			'my_plugin',
+			'ak_my_plugin',
 			array(
 				'ajax_url' => admin_url( 'admin-ajax.php' ),
 			)
@@ -382,6 +404,7 @@ function ak_enqueue_submenu_js() {
 	}
 }
 add_action( 'admin_enqueue_scripts', 'ak_enqueue_submenu_js' );
+
 
 /**
  * Update the submenu page callback function to display portfolio posts.
@@ -410,23 +433,6 @@ function ak_get_portfolio_posts_callback() {
 	if ( $query->have_posts() ) {
 		include_once plugin_dir_path( __FILE__ ) . 'templates/retrieve-portfolio-posts.php';
 
-		while ( $query->have_posts() ) {
-			$query->the_post();
-			echo '<tr>';
-			echo '<td>' . esc_html( get_the_title() ) . '</td>';
-			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'client_name', true ) ) . '</td>';
-			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'company_name', true ) ) . '</td>';
-			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'email', true ) ) . '</td>';
-			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'phone', true ) ) . '</td>';
-			echo '<td>' . esc_html( get_post_meta( get_the_ID(), 'address', true ) ) . '</td>';
-			echo '<td>' . esc_html( get_the_date() ) . '</td>';
-			echo '<td><button class="delete-portfolio-post" data-post-id="' . esc_attr( get_the_ID() ) . '">' . esc_html__( 'Delete', 'akila-portfolio' ) . '</button></td>';
-
-			echo '</tr>';
-		}
-
-		echo '</table>';
-		wp_reset_postdata();
 	} else {
 		echo '<p>' . esc_html__( 'No portfolio posts found.', 'akila-portfolio' ) . '</p>';
 	}
@@ -529,10 +535,13 @@ add_action( 'rest_api_init', 'ak_register_custom_endpoints' );
 function ak_add_custom_plugin_button( $links ) {
 	$custom_plugin_page = admin_url( 'admin.php?page=custom-slug' );
 
+	$button_label = __( 'Plugin Details' );
+
 	// Add the custom button link.
-	$custom_link = '<a href="' . esc_url( $custom_plugin_page ) . '" class="button">Custom Button</a>';
+	$custom_link = '<a href="' . esc_url( $custom_plugin_page ) . '" class="">' . $button_label . '</a>';
 	array_unshift( $links, $custom_link );
 
 	return $links;
 }
 add_filter( 'plugin_action_links_' . plugin_basename( __FILE__ ), 'ak_add_custom_plugin_button' );
+

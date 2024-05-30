@@ -14,7 +14,9 @@ add_action( 'plugins_loaded', 'AkilaPlugin\Admin\load_textdomain' );
 
 // Enqueue CSS file for portfolio submission form.
 function enqueue_portfolio_submission_form_css() {
-	wp_enqueue_style( 'portfolio-submission-form-style', plugin_dir_url( __FILE__ ) . '/../css/portfolio-submission-form.css', array(), '1.0.0' );
+	if ( ! is_admin() ) {
+		wp_enqueue_style( 'portfolio-submission-form-style', plugin_dir_url( __FILE__ ) . '/../css/portfolio-submission-form.css', array(), '1.0.0' );
+	}
 }
 add_action( 'admin_enqueue_scripts', 'AkilaPlugin\Admin\enqueue_portfolio_submission_form_css' );
 
