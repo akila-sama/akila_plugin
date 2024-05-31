@@ -6,7 +6,7 @@ use function AkilaPlugin\Ajax\save_custom_data_ajax;
 
 // Enqueue AJAX script.
 function enqueue_my_plugin_ajax_script() {
-	wp_enqueue_script( 'my-plugin-ajax-script', plugin_dir_url( __FILE__ ) . '/../js/akila-plugin.js', array( 'jquery' ), '1.0', true );
+	wp_enqueue_script( 'my-plugin-ajax-script', plugin_dir_url( __FILE__ ) . '/../js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
 	wp_localize_script(
 		'my-plugin-ajax-script',
 		'my_ajax_object',

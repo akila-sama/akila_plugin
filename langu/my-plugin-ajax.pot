@@ -13,23 +13,23 @@ msgstr ""
 "X-Domain: languages\n"
 
 #. Plugin Name of the plugin
-#: akila-plugin.php
+#: akila-portfolio.php
 msgid "My Plugin AJAX"
 msgstr ""
 
 #. Plugin URI of the plugin
 #. Author URI of the plugin
-#: akila-plugin.php
+#: akila-portfolio.php
 msgid "https://example.com"
 msgstr ""
 
 #. Description of the plugin
-#: akila-plugin.php
+#: akila-portfolio.php
 msgid "This plugin allows users to submit their portfolio details through a form and inserts the data into a custom post type 'portfolio'. It also extends the functionality of a shortcode to display recent posts by category."
 msgstr ""
 
 #. Author of the plugin
-#: akila-plugin.php
+#: akila-portfolio.php
 msgid "akila"
 msgstr ""
 

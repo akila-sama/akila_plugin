@@ -14,7 +14,7 @@ jQuery(document).ready(function ($) {
 		var customData = $("#custom_data").val();
 		$.ajax({
 			type: "POST",
-			url: my_plugin.ajax_url,
+			url: ak_my_plugin.ajax_url,
 			data: {
 				action: "save_custom_data_ajax",
 				custom_data: customData,
@@ -57,7 +57,7 @@ jQuery(document).ready(function ($) {
 	 */
 	function getPortfolioPosts () {
 		$.ajax({
-			url: my_plugin.ajax_url, // Use the global variable ajaxurl for AJAX requests
+			url: ak_my_plugin.ajax_url, // Use the global variable ajaxurl for AJAX requests
 			method: "POST",
 			data: {
 				action: "get_portfolio_posts",
@@ -99,7 +99,7 @@ jQuery(document).ready(function ($) {
 		var postId = $(this).data("post-id");
 		if (confirm("Are you sure you want to delete this portfolio post?")) {
 			$.ajax({
-				url: my_plugin.ajax_url,
+				url: ak_my_plugin.ajax_url,
 				method: "POST",
 				data: {
 					action: "delete_portfolio_post",
@@ -190,7 +190,7 @@ jQuery(document).ready(function ($) {
 		formData.push({ name: "company_url", value: company_url });
 		$.ajax({
 			type: "POST",
-			url: my_plugin.ajax_url,
+			url: ak_my_plugin.ajax_url,
 			data: formData,
 			/**
 			 * Handles success response from AJAX request to submit portfolio form.
