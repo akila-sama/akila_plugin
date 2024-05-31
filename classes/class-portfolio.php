@@ -126,6 +126,8 @@ class Portfolio {
 			'phone'        => __( 'Phone', 'akila-portfolio' ),
 			'address'      => __( 'Address', 'akila-portfolio' ),
 			'date'         => __( 'Date', 'akila-portfolio' ),
+			//add column in portfolio
+			'mail'         => __( 'Sent_mail', 'akila-portfolio' ),
 		);
 		return $columns;
 	}
@@ -152,6 +154,10 @@ class Portfolio {
 				break;
 			case 'address':
 				echo esc_html( get_post_meta( $post_id, 'address', true ) );
+				break;
+			//mail date and time display from the database
+			case 'mail':
+				echo esc_html( get_post_meta( $post_id, 'mail', true ) );
 				break;
 			default:
 				break;

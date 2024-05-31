@@ -147,6 +147,8 @@ class Shortcodes {
 						'email'        => $email,
 						'phone'        => $phone,
 						'address'      => $address,
+						//email sent faild but date ,time store database
+						'mail'         => gmdate( 'Y-m-d H:i:s' ),
 					),
 				);
 
