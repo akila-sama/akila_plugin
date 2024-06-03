@@ -44,5 +44,4 @@
 		<input type="submit" id="submit_custom_data" name="submit_custom_data" class="button-primary" value="<?php esc_html_e( 'Save', 'akila-portfolio' ); ?>" />
 	</form>
 	<div id="message"></div>
-	<!-- This div will display the message -->
 </div>

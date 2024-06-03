@@ -7,18 +7,39 @@
  * Text Domain: akila-portfolio
  */
 
-require_once plugin_dir_path( __FILE__ ) . 'includes/admin-functions.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/ajax-functions.php';
-require_once plugin_dir_path( __FILE__ ) . 'classes/class-portfolio.php';
-require_once plugin_dir_path( __FILE__ ) . 'classes/class-pluginpage.php';
-require_once plugin_dir_path( __FILE__ ) . 'classes/class-shortcodes.php';
-require_once plugin_dir_path( __FILE__ ) . 'classes/class-button.php'; // Include the new class
-require_once plugin_dir_path( __FILE__ ) . 'classes/class-endpoints.php';
+/**
+ * Define Akila Portfolio plugin directory constant if not already defined.
+ */
+if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
+	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
 
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-portfolio.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-pluginpage.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-shortcodes.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-button.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-endpoints.php';
 
-// Initialize classes.
-new Akila\Portfolio\Portfolio();
-new Akila\Portfolio\PluginPage();
-new Akila\Portfolio\Shortcodes();
-new Akila\Portfolio\Button();
-new Akila\Portfolio\Endpoints();
+new Akila\Portfolio\Portfolio(); // Initializes the Portfolio class for handling portfolio items
+new Akila\Portfolio\PluginPage(); // Initializes the PluginPage class for admin page enhancements
+new Akila\Portfolio\Shortcodes(); // Initializes the Shortcodes class for managing shortcodes
+new Akila\Portfolio\Button(); // Initializes the Button class for adding a custom button in the plugins page
+new Akila\Portfolio\Endpoints(); // Initializes the Endpoints class for custom REST API endpoints
+
+// Activation hook
+function cpp_activate_plugin() {
+	// Change permalink structure to Post name
+	global $wp_rewrite;
+	$wp_rewrite->set_permalink_structure( '/%postname%/' );
+	$wp_rewrite->flush_rules(); // To make sure the changes take effect immediately
+}
+register_activation_hook( __FILE__, 'cpp_activate_plugin' );
+
+// Deactivation hook
+function cpp_deactivate_plugin() {
+	// Change permalink structure to Plain
+	global $wp_rewrite;
+	$wp_rewrite->set_permalink_structure( '' );
+	$wp_rewrite->flush_rules(); // To make sure the changes take effect immediately
+}
+register_deactivation_hook( __FILE__, 'cpp_deactivate_plugin' );

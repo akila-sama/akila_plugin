@@ -85,6 +85,15 @@ textarea {
 	font-weight: bold;
 }
 
+#portfolio-posts-container {
+	overflow: auto;
+}
+
+#portfolio-posts-container table {
+	width: 100%;
+	border-collapse: collapse;
+}
+
 /* CSS styles for portfolio submission form */
 #portfolio-posts-container th,
 #portfolio-posts-container td {
@@ -118,3 +127,5 @@ textarea {
 	border-radius: 4px;
 	cursor: pointer;
 }
+
+

@@ -2,22 +2,40 @@
 
 namespace Akila\Portfolio;
 
+if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
+	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+/**
+ * Class Portfolio
+ *
+ * Handles the registration of the Portfolio custom post type,
+ * as well as custom fields and columns for the Portfolio items.
+ */
 class Portfolio {
 
+	/**
+	 * Constructor.
+	 *
+	 * Initializes the hooks for registering custom post type,
+	 * adding custom fields, saving custom fields, and customizing columns.
+	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'ak_custom_portfolio_post_type' ) );
-		add_action( 'add_meta_boxes', array( $this, 'add_custom_fields' ) );
-		add_action( 'save_post', array( $this, 'save_custom_fields' ) );
-		add_filter( 'manage_portfolio_posts_columns', array( $this, 'custom_portfolio_columns' ) );
+		add_action( 'add_meta_boxes', array( $this, 'ak_add_custom_fields' ) );
+		add_action( 'save_post', array( $this, 'ak_save_custom_fields' ) );
+		add_filter( 'manage_portfolio_posts_columns', array( $this, 'ak_custom_portfolio_columns' ) );
 		add_action( 'manage_portfolio_posts_custom_column', array( $this, 'ak_custom_portfolio_columns_data' ), 10, 2 );
 		add_filter( 'manage_edit-portfolio_sortable_columns', array( $this, 'ak_custom_portfolio_sortable_columns' ) );
 	}
 
 	/**
-	* Register Custom Post Type.
-	*
-	* @return void
-	*/
+	 * Register Custom Post Type.
+	 *
+	 * Registers the 'portfolio' custom post type with specific labels and arguments.
+	 *
+	 * @return void
+	 */
 	public function ak_custom_portfolio_post_type() {
 		$labels = array(
 			'name'                  => _x( 'Portfolio', 'Post Type General Name', 'text_domain' ),
@@ -66,15 +84,17 @@ class Portfolio {
 	}
 
 	/**
-	* Add custom fields to the Portfolio post type.
-	*
-	* @return void
-	*/
-	public function add_custom_fields() {
+	 * Add custom fields to the Portfolio post type.
+	 *
+	 * Adds a meta box for custom fields in the 'portfolio' post type.
+	 *
+	 * @return void
+	 */
+	public function ak_add_custom_fields() {
 		add_meta_box(
 			'portfolio_fields',
 			__( 'Portfolio Item Details', 'akila-portfolio' ),
-			array( $this, 'render_portfolio_fields' ),
+			array( $this, 'ak_render_portfolio_fields' ),
 			'portfolio',
 			'normal',
 			'default'
@@ -82,21 +102,25 @@ class Portfolio {
 	}
 
 	/**
-	* Render custom fields.
-	*
-	* @return void
+	 * Render custom fields.
+	 *
+	 * Includes the template file for rendering custom fields in the meta box.
+	 *
+	 * @return void
 	 */
-	public function render_portfolio_fields() {
-		include plugin_dir_path( __FILE__ ) . '../templates/portfolio-fields.php';
+	public function ak_render_portfolio_fields() {
+		include AKILA_PORTFOLIO_PLUGIN_DIR . '../templates/portfolio-fields.php';
 	}
 
 	/**
-	* Save custom fields data.
-	*
-	* @param int $post_id The ID of the post being saved.
-	* @return void
-	*/
-	public function save_custom_fields( $post_id ) {
+	 * Save custom fields data.
+	 *
+	 * Saves the custom fields data when a portfolio post is saved.
+	 *
+	 * @param int $post_id The ID of the post being saved.
+	 * @return void
+	 */
+	public function ak_save_custom_fields( $post_id ) {
 		if ( ! isset( $_POST['portfolio_fields_nonce'] ) || ! wp_verify_nonce( $_POST['portfolio_fields_nonce'], 'save_portfolio_fields' ) ) {
 			return;
 		}
@@ -111,12 +135,14 @@ class Portfolio {
 	}
 
 	/**
-	* Customize portfolio columns.
-	*
-	* @param array $columns Existing columns.
-	* @return array Modified columns.
-	*/
-	public function custom_portfolio_columns( $columns ) {
+	 * Customize portfolio columns.
+	 *
+	 * Adds custom columns to the 'portfolio' post type list table.
+	 *
+	 * @param array $columns Existing columns.
+	 * @return array Modified columns.
+	 */
+	public function ak_custom_portfolio_columns( $columns ) {
 		$columns = array(
 			'cb'           => '<input type="checkbox" />',
 			'title'        => __( 'Title', 'akila-portfolio' ),
@@ -126,18 +152,19 @@ class Portfolio {
 			'phone'        => __( 'Phone', 'akila-portfolio' ),
 			'address'      => __( 'Address', 'akila-portfolio' ),
 			'date'         => __( 'Date', 'akila-portfolio' ),
-			//add column in portfolio
-			'mail'         => __( 'Sent_mail', 'akila-portfolio' ),
+			'mail'         => __( 'Sent Mail', 'akila-portfolio' ),
 		);
 		return $columns;
 	}
 
 	/**
-	* Populate custom columns with data.
-	*
-	* @param string $column The name of the column.
-	* @param int $post_id The ID of the post.
-	*/
+	 * Populate custom columns with data.
+	 *
+	 * Outputs data for each custom column in the 'portfolio' post type list table.
+	 *
+	 * @param string $column The name of the column.
+	 * @param int $post_id The ID of the post.
+	 */
 	public function ak_custom_portfolio_columns_data( $column, $post_id ) {
 		switch ( $column ) {
 			case 'client_name':
@@ -155,7 +182,6 @@ class Portfolio {
 			case 'address':
 				echo esc_html( get_post_meta( $post_id, 'address', true ) );
 				break;
-			//mail date and time display from the database
 			case 'mail':
 				echo esc_html( get_post_meta( $post_id, 'mail', true ) );
 				break;
@@ -165,11 +191,13 @@ class Portfolio {
 	}
 
 	/**
-	* Make custom columns sortable.
-	*
-	* @param array $columns The columns.
-	* @return array The modified columns.
-	*/
+	 * Make custom columns sortable.
+	 *
+	 * Makes custom columns sortable in the 'portfolio' post type list table.
+	 *
+	 * @param array $columns The columns.
+	 * @return array The modified columns.
+	 */
 	public function ak_custom_portfolio_sortable_columns( $columns ) {
 		$columns['client_name']  = 'client_name';
 		$columns['company_name'] = 'company_name';

@@ -2,13 +2,26 @@
 
 namespace Akila\Portfolio;
 
+if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
+	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_URL' ) ) {
+	define( 'AKILA_PORTFOLIO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
+}
+
+/**
+ * Class Shortcodes
+ *
+ * Handles the registration and processing of shortcodes related to the portfolio.
+ */
 class Shortcodes {
 
 	public function __construct() {
 		add_shortcode( 'recent_posts_by_category', array( $this, 'ak_recent_posts_by_category_shortcode' ) );
 		add_shortcode( 'portfolio_submission_form', array( $this, 'ak_portfolio_submission_form_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'ak_enqueue_portfolio_submission_css' ) );
-		add_action( 'wp_enqueue_scripts', array( $this, 'enqueue_akila_plugin_js' ) );
+		add_action( 'wp_enqueue_scripts', array( $this, 'ak_enqueue_akila_plugin_js' ) );
 		add_action( 'wp_ajax_portfolio_submission', array( $this, 'ak_process_portfolio_submission' ) );
 		add_action( 'wp_ajax_nopriv_portfolio_submission', array( $this, 'ak_process_portfolio_submission' ) );
 	}
@@ -22,21 +35,19 @@ class Shortcodes {
 	public function ak_recent_posts_by_category_shortcode( $atts ) {
 		$atts = shortcode_atts(
 			array(
-				'category' => '', // default category
-				'count'    => 5,   // default number of posts to display
+				'category' => '',
+				'count'    => 5,
 			),
 			$atts,
 			'recent_posts_by_category'
 		);
 
-		// Query recent posts with the specified category
 		$query_args  = array(
 			'posts_per_page' => $atts['count'],
 			'category_name'  => $atts['category'],
 		);
 		$posts_query = new \WP_Query( $query_args );
 
-		// Output the list of recent posts
 		$output = '<ul>';
 		if ( $posts_query->have_posts() ) {
 			while ( $posts_query->have_posts() ) {
@@ -48,7 +59,6 @@ class Shortcodes {
 		}
 		$output .= '</ul>';
 
-		// Restore global post data
 		wp_reset_postdata();
 
 		return $output;
@@ -70,7 +80,7 @@ class Shortcodes {
 		);
 
 		ob_start();
-		include plugin_dir_path( __FILE__ ) . '../templates/portfolio-form.php';
+		include AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/portfolio-form.php';
 		return ob_get_clean();
 	}
 
@@ -93,17 +103,16 @@ class Shortcodes {
 	*/
 	public function ak_enqueue_portfolio_submission_css() {
 		if ( ! is_admin() && $this->ak_has_shortcode( 'portfolio_submission_form' ) ) {
-			$plugin_dir_url = plugin_dir_url( __FILE__ );
-			wp_enqueue_style( 'portfolio-submission-css', $plugin_dir_url . '../css/portfolio-submission-form.css', array(), '1.0' );
+			wp_enqueue_style( 'portfolio-submission-css', AKILA_PORTFOLIO_PLUGIN_URL . '../css/portfolio-submission-form.css', array(), '1.0' );
 		}
 	}
 
 	/**
 	* Enqueue JavaScript file for the plugin on the front-end only if the shortcode is present.
 	*/
-	public function enqueue_akila_plugin_js() {
+	public function ak_enqueue_akila_plugin_js() {
 		if ( ! is_admin() && $this->ak_has_shortcode( 'portfolio_submission_form' ) ) {
-			wp_enqueue_script( 'akila-portfolio-js-1', plugin_dir_url( __FILE__ ) . '../js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
+			wp_enqueue_script( 'akila-portfolio-js-1', AKILA_PORTFOLIO_PLUGIN_URL . '../js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
 			wp_localize_script(
 				'akila-portfolio-js-1',
 				'ak_my_plugin',
@@ -155,9 +164,9 @@ class Shortcodes {
 				// Insert post into the database
 				$post_id = wp_insert_post( $portfolio_data );
 				if ( is_wp_error( $post_id ) ) {
-					echo 'Error: ' . esc_html( $post_id->get_error_message() );
+					echo esc_html__( 'Error: ', 'akila-portfolio' ) . esc_html( $post_id->get_error_message() );
 				} else {
-					echo 'Success! Your portfolio has been submitted.';
+					echo esc_html__( 'Success! Your portfolio has been submitted.', 'akila-portfolio' );
 				}
 			}
 		}
