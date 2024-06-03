@@ -74,6 +74,7 @@ class PluginPage {
 
 	/**
 	 * Add a custom menu page.
+	 * Registers a custom menu page for displaying plugin details.
 	 */
 	public function ak_custom_menu() {
 		add_menu_page(
@@ -89,14 +90,16 @@ class PluginPage {
 
 	/**
 	 * Render plugin details.
+	 * Callback function to display plugin details in the custom menu page.
 	 */
 	public function ak_display_plugin_details() {
 		include_once AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/plugin-details.php';
 	}
 
 	/**
-	* Enqueue AJAX script.
-	*/
+	 * Enqueue AJAX script.
+	 * Enqueues JavaScript file for handling AJAX requests in the admin area.
+	 */
 	public function ak_enqueue_my_plugin_ajax_script() {
 		wp_enqueue_script( 'my-plugin-ajax-script', AKILA_PORTFOLIO_PLUGIN_URL . '../js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
 		wp_localize_script(
@@ -111,6 +114,7 @@ class PluginPage {
 
 	/**
 	 * Function to save data to wp-options table via AJAX.
+	 * Handles AJAX request to save custom data to the WordPress options table.
 	 */
 	public function save_custom_data_ajax() {
 		check_ajax_referer( 'custom_data_nonce', 'security' );
@@ -125,10 +129,9 @@ class PluginPage {
 	}
 
 	/**
-	 * Add a submenu page.
-	 *
-	 * @return void
-	 */
+	* Add a submenu page.
+	* Registers a submenu page for managing REST API functionalities.
+	*/
 	public function ak_custom_submenu() {
 		add_submenu_page(
 			'ak_custom-slug', // Parent menu slug
@@ -141,8 +144,9 @@ class PluginPage {
 	}
 
 	/**
-	 * Update the submenu page callback function to display portfolio posts.
-	 */
+	* Update the submenu page callback function to display portfolio posts.
+	* Callback function to display portfolio posts in the submenu page.
+	*/
 	public function ak_display_submenu_details() {
 		?>
 		<div class="wrap">
@@ -155,6 +159,7 @@ class PluginPage {
 
 	/**
 	 * AJAX function to retrieve portfolio posts.
+	 * Handles AJAX request to retrieve portfolio posts.
 	 */
 	public function ak_get_portfolio_posts_callback() {
 		$args = array(
@@ -176,8 +181,7 @@ class PluginPage {
 
 	/**
 	 * AJAX function to delete portfolio post.
-	 *
-	 * @return void
+	 * Handles AJAX request to delete a portfolio post.
 	 */
 	public function ak_delete_portfolio_post_callback() {
 		check_ajax_referer( 'delete_portfolio_post_nonce', 'nonce' );

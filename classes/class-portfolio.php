@@ -116,7 +116,7 @@ class Portfolio {
 	 * Save custom fields data.
 	 *
 	 * Saves the custom fields data when a portfolio post is saved.
-	 *
+	 * @since 1.0.0
 	 * @param int $post_id The ID of the post being saved.
 	 * @return void
 	 */
@@ -138,7 +138,7 @@ class Portfolio {
 	 * Customize portfolio columns.
 	 *
 	 * Adds custom columns to the 'portfolio' post type list table.
-	 *
+	 * @since 1.0.0
 	 * @param array $columns Existing columns.
 	 * @return array Modified columns.
 	 */
@@ -161,7 +161,7 @@ class Portfolio {
 	 * Populate custom columns with data.
 	 *
 	 * Outputs data for each custom column in the 'portfolio' post type list table.
-	 *
+	 * @since 1.0.0
 	 * @param string $column The name of the column.
 	 * @param int $post_id The ID of the post.
 	 */
@@ -194,7 +194,7 @@ class Portfolio {
 	 * Make custom columns sortable.
 	 *
 	 * Makes custom columns sortable in the 'portfolio' post type list table.
-	 *
+	 * @since 1.0.0
 	 * @param array $columns The columns.
 	 * @return array The modified columns.
 	 */
