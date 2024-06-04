@@ -1,0 +1,423 @@
+User
+akila-portfolio
+   -akila-portfolio.php 
+   -classses
+       -class-portfolio.php 
+    -template 
+          portfolio-field.php
+
+
+akila-portfolio.php :
+<?php
+/**
+ * Plugin Name: Akila Portfolio
+ * Description: Akila Portfolio is a comprehensive portfolio management plugin for WordPress. It allows users to create and manage portfolio items with custom fields, display recent posts by category, and submit portfolio items via a front-end form. It includes AJAX-based functionalities, custom REST API endpoints, and admin page enhancements.
+ * Version: 1.0
+ * Author: Akila
+ * Text Domain: akila-portfolio
+ */
+
+/**
+ * Define Akila Portfolio plugin directory constant if not already defined.
+ */
+if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
+	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-portfolio.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-pluginpage.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-shortcodes.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-button.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-endpoints.php';
+
+new Akila\Portfolio\Portfolio(); // Initializes the Portfolio class for handling portfolio items
+new Akila\Portfolio\PluginPage(); // Initializes the PluginPage class for admin page enhancements
+new Akila\Portfolio\Shortcodes(); // Initializes the Shortcodes class for managing shortcodes
+new Akila\Portfolio\Button(); // Initializes the Button class for adding a custom button in the plugins page
+new Akila\Portfolio\Endpoints(); // Initializes the Endpoints class for custom REST API endpoints
+
+// Activation hook
+function cpp_activate_plugin() {
+	// Change permalink structure to Post name
+	global $wp_rewrite;
+	$wp_rewrite->set_permalink_structure( '/%postname%/' );
+	$wp_rewrite->flush_rules(); // To make sure the changes take effect immediately
+}
+register_activation_hook( __FILE__, 'cpp_activate_plugin' );
+
+// Deactivation hook
+function cpp_deactivate_plugin() {
+	// Change permalink structure to Plain
+	global $wp_rewrite;
+	$wp_rewrite->set_permalink_structure( '' );
+	$wp_rewrite->flush_rules(); // To make sure the changes take effect immediately
+}
+register_deactivation_hook( __FILE__, 'cpp_deactivate_plugin' );
+
+
+
+
+class-portfolio.php :
+<?php
+
+namespace Akila\Portfolio;
+
+if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
+	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
+}
+
+/**
+ * Class Portfolio
+ *
+ * Handles the registration of the Portfolio custom post type,
+ * as well as custom fields and columns for the Portfolio items.
+ */
+class Portfolio {
+
+	/**
+	 * Constructor.
+	 *
+	 * Initializes the hooks for registering custom post type,
+	 * adding custom fields, saving custom fields, and customizing columns.
+	 */
+	public function __construct() {
+		add_action( 'init', array( $this, 'ak_custom_portfolio_post_type' ) );
+		add_action( 'add_meta_boxes', array( $this, 'ak_add_custom_fields' ) );
+		add_action( 'save_post', array( $this, 'ak_save_custom_fields' ) );
+		add_filter( 'manage_portfolio_posts_columns', array( $this, 'ak_custom_portfolio_columns' ) );
+		add_action( 'manage_portfolio_posts_custom_column', array( $this, 'ak_custom_portfolio_columns_data' ), 10, 2 );
+		add_filter( 'manage_edit-portfolio_sortable_columns', array( $this, 'ak_custom_portfolio_sortable_columns' ) );
+	}
+
+	/**
+	 * Register Custom Post Type.
+	 *
+	 * Registers the 'portfolio' custom post type with specific labels and arguments.
+	 *
+	 * @return void
+	 */
+	public function ak_custom_portfolio_post_type() {
+		$labels = array(
+			'name'                  => _x( 'Portfolio', 'Post Type General Name', 'text_domain' ),
+			'singular_name'         => _x( 'Portfolio Item', 'Post Type Singular Name', 'text_domain' ),
+			'menu_name'             => __( 'Portfolio', 'text_domain' ),
+			'all_items'             => __( 'All Items', 'text_domain' ),
+			'add_new_item'          => __( 'Add New Item', 'text_domain' ),
+			'add_new'               => __( 'Add New', 'text_domain' ),
+			'edit_item'             => __( 'Edit Item', 'text_domain' ),
+			'update_item'           => __( 'Update Item', 'text_domain' ),
+			'view_item'             => __( 'View Item', 'text_domain' ),
+			'search_items'          => __( 'Search Item', 'text_domain' ),
+			'not_found'             => __( 'Not found', 'text_domain' ),
+			'not_found_in_trash'    => __( 'Not found in Trash', 'text_domain' ),
+			'featured_image'        => __( 'Featured Image', 'text_domain' ),
+			'set_featured_image'    => __( 'Set featured image', 'text_domain' ),
+			'remove_featured_image' => __( 'Remove featured image', 'text_domain' ),
+			'use_featured_image'    => __( 'Use as featured image', 'text_domain' ),
+			'insert_into_item'      => __( 'Insert into item', 'text_domain' ),
+			'uploaded_to_this_item' => __( 'Uploaded to this item', 'text_domain' ),
+			'items_list'            => __( 'Items list', 'text_domain' ),
+			'items_list_navigation' => __( 'Items list navigation', 'text_domain' ),
+			'filter_items_list'     => __( 'Filter items list', 'text_domain' ),
+		);
+		$args   = array(
+			'label'               => __( 'Portfolio Item', 'text_domain' ),
+			'description'         => __( 'Portfolio items', 'text_domain' ),
+			'labels'              => $labels,
+			'supports'            => array( 'title', 'editor', 'thumbnail', 'custom-fields' ),
+			'taxonomies'          => array( 'category', 'post_tag' ),
+			'hierarchical'        => false,
+			'public'              => true,
+			'menu_position'       => 5,
+			'menu_icon'           => 'dashicons-portfolio',
+			'show_ui'             => true,
+			'show_in_menu'        => true,
+			'show_in_admin_bar'   => true,
+			'show_in_nav_menus'   => true,
+			'can_export'          => true,
+			'has_archive'         => true,
+			'exclude_from_search' => false,
+			'publicly_queryable'  => true,
+			'capability_type'     => 'post',
+		);
+		register_post_type( 'portfolio', $args );
+	}
+
+	/**
+	 * Add custom fields to the Portfolio post type.
+	 *
+	 * Adds a meta box for custom fields in the 'portfolio' post type.
+	 *
+	 * @return void
+	 */
+	public function ak_add_custom_fields() {
+		add_meta_box(
+			'portfolio_fields',
+			__( 'Portfolio Item Details', 'akila-portfolio' ),
+			array( $this, 'ak_render_portfolio_fields' ),
+			'portfolio',
+			'normal',
+			'default'
+		);
+	}
+
+	/**
+	 * Render custom fields.
+	 *
+	 * Includes the template file for rendering custom fields in the meta box.
+	 *
+	 * @return void
+	 */
+	public function ak_render_portfolio_fields() {
+		include AKILA_PORTFOLIO_PLUGIN_DIR . '../templates/portfolio-fields.php';
+	}
+
+	/**
+	 * Save custom fields data.
+	 *
+	 * Saves the custom fields data when a portfolio post is saved.
+	 * @since 1.0.0
+	 * @param int $post_id The ID of the post being saved.
+	 * @return void
+	 */
+	public function ak_save_custom_fields( $post_id ) {
+		if ( ! isset( $_POST['portfolio_fields_nonce'] ) || ! wp_verify_nonce( $_POST['portfolio_fields_nonce'], 'save_portfolio_fields' ) ) {
+			return;
+		}
+
+		if ( array_key_exists( 'client_name', $_POST ) ) {
+			update_post_meta( $post_id, 'client_name', sanitize_text_field( $_POST['client_name'] ) );
+		}
+
+		if ( array_key_exists( 'project_url', $_POST ) ) {
+			update_post_meta( $post_id, 'project_url', sanitize_text_field( $_POST['project_url'] ) );
+		}
+	}
+
+	/**
+	 * Customize portfolio columns.
+	 *
+	 * Adds custom columns to the 'portfolio' post type list table.
+	 * @since 1.0.0
+	 * @param array $columns Existing columns.
+	 * @return array Modified columns.
+	 */
+	public function ak_custom_portfolio_columns( $columns ) {
+		$columns = array(
+			'cb'           => '<input type="checkbox" />',
+			'title'        => __( 'Title', 'akila-portfolio' ),
+			'client_name'  => __( 'Client Name', 'akila-portfolio' ),
+			'company_name' => __( 'Company Name', 'akila-portfolio' ),
+			'email'        => __( 'Email', 'akila-portfolio' ),
+			'phone'        => __( 'Phone', 'akila-portfolio' ),
+			'address'      => __( 'Address', 'akila-portfolio' ),
+			'date'         => __( 'Date', 'akila-portfolio' ),
+			'mail'         => __( 'Sent Mail', 'akila-portfolio' ),
+		);
+		return $columns;
+	}
+
+	/**
+	 * Populate custom columns with data.
+	 *
+	 * Outputs data for each custom column in the 'portfolio' post type list table.
+	 * @since 1.0.0
+	 * @param string $column The name of the column.
+	 * @param int $post_id The ID of the post.
+	 */
+	public function ak_custom_portfolio_columns_data( $column, $post_id ) {
+		switch ( $column ) {
+			case 'client_name':
+				echo esc_html( get_post_meta( $post_id, 'client_name', true ) );
+				break;
+			case 'company_name':
+				echo esc_html( get_post_meta( $post_id, 'company_name', true ) );
+				break;
+			case 'email':
+				echo esc_html( get_post_meta( $post_id, 'email', true ) );
+				break;
+			case 'phone':
+				echo esc_html( get_post_meta( $post_id, 'phone', true ) );
+				break;
+			case 'address':
+				echo esc_html( get_post_meta( $post_id, 'address', true ) );
+				break;
+			case 'mail':
+				echo esc_html( get_post_meta( $post_id, 'mail', true ) );
+				break;
+			default:
+				break;
+		}
+	}
+
+	/**
+	 * Make custom columns sortable.
+	 *
+	 * Makes custom columns sortable in the 'portfolio' post type list table.
+	 * @since 1.0.0
+	 * @param array $columns The columns.
+	 * @return array The modified columns.
+	 */
+	public function ak_custom_portfolio_sortable_columns( $columns ) {
+		$columns['client_name']  = 'client_name';
+		$columns['company_name'] = 'company_name';
+		$columns['email']        = 'email';
+		$columns['phone']        = 'phone';
+		$columns['address']      = 'address';
+		return $columns;
+	}
+}
+
+portfolio-details.php :
+<!-- akila-portfolio.php code html separate here -->
+
+<div class="wrap">
+	<h2><?php esc_html_e( 'My Plugin Details', 'akila-portfolio' ); ?></h2>
+	<div class="plugin-info">
+		<p><strong><?php esc_html_e( 'Plugin Name:', 'akila-portfolio' ); ?></strong> <?php esc_html_e( 'My plugin ajax', 'akila-portfolio' ); ?></p>
+		<p><strong><?php esc_html_e( 'Description:', 'akila-portfolio' ); ?></strong> <?php esc_html_e( 'This is a testing plugin. This plugin is my first plugin.', 'akila-portfolio' ); ?></p>
+		<p><strong><?php esc_html_e( 'Author:', 'akila-portfolio' ); ?></strong><?php esc_html_e( 'akila', 'akila-portfolio' ); ?></p>
+		<p><strong><?php esc_html_e( 'Version:', 'akila-portfolio' ); ?></strong><?php esc_html_e( '1.0', 'akila-portfolio' ); ?></p>
+	</div>
+
+	<h3><?php esc_html_e( 'Shortcode Details', 'akila-portfolio' ); ?></h3>
+	<div class="shortcode-info">
+		<p><strong><?php esc_html_e( 'Shortcode Name:', 'akila-portfolio' ); ?></strong> <?php esc_html_e( 'portfolio_submission_form' ); ?></p>
+		<p><strong><?php esc_html_e( 'Functionality:', 'akila-portfolio' ); ?></strong> <?php esc_html_e( 'This shortcode allows users to submit their portfolio details through a form, including name, company name, email, phone, and address. Upon submission, the data is inserted into the custom post type \'portfolio\'.', 'akila-portfolio' ); ?></p>
+		<form>
+			<input type="hidden" name="action" value="portfolio_submission">
+			<?php wp_nonce_field( 'portfolio_submission_nonce', 'portfolio_submission_nonce_field' ); ?>
+
+			<label for="name"><?php esc_html_e( 'Name:', 'akila-portfolio' ); ?></label>
+			<input type="text" id="name" name="name" required><br><br>
+
+			<label for="company_name"><?php esc_html_e( 'Company Name:', 'akila-portfolio' ); ?></label>
+			<input type="text" id="company_name" name="company_name"><br><br>
+
+			<label for="email"><?php esc_html_e( 'Email:', 'akila-portfolio' ); ?></label>
+			<input type="email" id="email" name="email" required><br><br>
+
+			<label for="phone"><?php esc_html_e( 'Phone:', 'akila-portfolio' ); ?></label>
+			<input type="tel" id="phone" name="phone"><br><br>
+
+			<label for="address"><?php esc_html_e( 'Address:', 'akila-portfolio' ); ?></label>
+			<textarea id="address" name="address" rows="6"></textarea><br><br>
+		</form>
+	</div>
+</div>
+<div class="wrap">
+	<h2><?php esc_html_e( 'Custom Page', 'akila-portfolio' ); ?></h2>
+	<form id="custom_data_form" method="post">
+		<!-- Add nonce field to the form -->
+		<?php wp_nonce_field( 'custom_data_nonce', 'custom_data_nonce' ); ?>
+		<label for="custom_data"><?php esc_html_e( 'Enter Custom Data:', 'akila-portfolio' ); ?></label>
+		<input type="text" id="custom_data" name="custom_data" value="<?php echo esc_attr( get_option( 'custom_data' ) ); ?>" /><br>
+		<input type="submit" id="submit_custom_data" name="submit_custom_data" class="button-primary" value="<?php esc_html_e( 'Save', 'akila-portfolio' ); ?>" />
+	</form>
+	<div id="message"></div>
+</div>
+
+
+
+js:
+/**
+ * Handles AJAX requests to retrieve and delete portfolio posts.
+ *
+ * @param {object} $ - jQuery object.
+ */
+jQuery(document).ready(function ($) {
+	/**
+	 * Retrieves portfolio posts using AJAX.
+	 */
+	function getPortfolioPosts () {
+		$.ajax({
+			url: ak_my_plugin.ajax_url, // Use the global variable ajaxurl for AJAX requests
+			method: "POST",
+			data: {
+				action: "get_portfolio_posts",
+			},
+			/**
+			 * Handles success response from AJAX request to retrieve portfolio posts.
+			 *
+			 * @param {string} response - Response from server.
+			 */
+			success: function (response) {
+				if (response) {
+					$("#portfolio-posts-container").html(response);
+				} else {
+					$("#portfolio-posts-container").html(
+						"<p>No portfolio posts found.</p>"
+					);
+				}
+			},
+			/**
+			 * Handles error response from AJAX request to retrieve portfolio posts.
+			 *
+			 * @param {object} xhr - XMLHttpRequest object.
+			 * @param {string} status - Status of the request.
+			 * @param {string} error - Error message.
+			 */
+			error: function (xhr, status, error) {
+				console.error(error);
+			},
+		});
+	}
+
+	// Call function to retrieve portfolio posts when the page loads
+	getPortfolioPosts();
+
+	/**
+	 * Handles click event on delete portfolio post button.
+	 */
+	$(document).off( "click", ".delete-portfolio-post" ).on("click", ".delete-portfolio-post", function () {
+		var postId = $(this).data("post-id");
+		if (confirm("Are you sure you want to delete this portfolio post?")) {
+			$.ajax({
+				url: ak_my_plugin.ajax_url,
+				method: "POST",
+				data: {
+					action: "delete_portfolio_post",
+					post_id: postId,
+					nonce: submenu_ajax_object.nonce, // Pass nonce here
+				},
+				/**
+				 * Handles success response from AJAX request to delete portfolio post.
+				 *
+				 * @param {string} response - Response from server.
+				 */
+				success: function (response) {
+					if (response === "success") {
+						$("#portfolio-posts-message")
+							.text("Portfolio post deleted successfully.")
+							.show();
+						getPortfolioPosts(); // Refresh the list of portfolio posts after deletion
+					} else {
+						alert("Error deleting portfolio post.");
+					}
+				},
+				/**
+				 * Handles error response from AJAX request to delete portfolio post.
+				 *
+				 * @param {object} xhr - XMLHttpRequest object.
+				 * @param {string} status - Status of the request.
+				 * @param {string} error - Error message.
+				 */
+				error: function (xhr, status, error) {
+					console.error(error);
+					alert("Error deleting portfolio post.");
+				},
+			});
+		}
+	});
+});
+
+
+
+create  :Create a cron event which will send an email notification to all the email records of the portfolio posts everyday,
+portfolio ki notification jani chahiye every day in webmail or gmail ,
+steps :in cron
+1. get all posts of portfoli
+2. check email isset.
+3. send email.
+
+=>plz provide proper code and file name declare and full code

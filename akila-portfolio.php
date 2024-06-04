@@ -19,6 +19,7 @@ require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-pluginpage.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-shortcodes.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-button.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-endpoints.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-cron.php'; // Include the Cron class
 
 new Akila\Portfolio\Portfolio(); // Initializes the Portfolio class for handling portfolio items
 new Akila\Portfolio\PluginPage(); // Initializes the PluginPage class for admin page enhancements
