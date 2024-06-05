@@ -1,5 +1,15 @@
-<!-- akila-portfolio.php code html separate here -->
+<?php
+/**
+ * Plugin Details Template
+ *
+ * This template displays detailed information about the plugin,
+ * description, author, version, and shortcode details. It also includes forms for
+ * submitting portfolio details and custom data.
+ *
+ * @package APortfolio
+ */
 
+?>
 <div class="wrap">
 	<h2><?php esc_html_e( 'My Plugin Details', 'akila-portfolio' ); ?></h2>
 	<div class="plugin-info">
@@ -44,5 +54,4 @@
 		<input type="submit" id="submit_custom_data" name="submit_custom_data" class="button-primary" value="<?php esc_html_e( 'Save', 'akila-portfolio' ); ?>" />
 	</form>
 	<div id="message"></div>
-	<!-- This div will display the message -->
 </div>

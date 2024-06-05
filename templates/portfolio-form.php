@@ -1,4 +1,13 @@
-<!-- templates/portfolio-form.php -->
+<?php
+/**
+ * Template for the portfolio submission form.
+ *
+ * This template is included in the shortcode for displaying the portfolio submission form.
+ *
+ * @package APortfolio
+ */
+
+?>
 <h2><?php echo esc_html( $atts['title'] ); ?></h2> <!-- Title added here -->
 <form id="portfolio_submission_form">
 	<input type="hidden" name="action" value="portfolio_submission">
