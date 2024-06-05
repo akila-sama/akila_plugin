@@ -1,6 +1,6 @@
 <?php
 
-namespace Akila\Portfolio;
+namespace APortfolio;
 
 /**
  * Class Endpoints

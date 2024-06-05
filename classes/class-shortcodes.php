@@ -1,14 +1,6 @@
 <?php
 
-namespace Akila\Portfolio;
-
-if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
-	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-}
-
-if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_URL' ) ) {
-	define( 'AKILA_PORTFOLIO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
-}
+namespace APortfolio;
 
 /**
  * Class Shortcodes

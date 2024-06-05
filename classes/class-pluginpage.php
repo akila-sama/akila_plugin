@@ -1,6 +1,6 @@
 <?php
 
-namespace Akila\Portfolio;
+namespace APortfolio;
 
 if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_URL' ) ) {
 	define( 'AKILA_PORTFOLIO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );

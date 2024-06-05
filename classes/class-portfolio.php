@@ -1,10 +1,6 @@
 <?php
 
-namespace Akila\Portfolio;
-
-if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
-	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
-}
+namespace APortfolio;
 
 /**
  * Class Portfolio
@@ -109,7 +105,7 @@ class Portfolio {
 	 * @return void
 	 */
 	public function ak_render_portfolio_fields() {
-		include AKILA_PORTFOLIO_PLUGIN_DIR . '../templates/portfolio-fields.php';
+		include AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/portfolio-fields.php';
 	}
 
 	/**
