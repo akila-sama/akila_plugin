@@ -12,6 +12,7 @@ class Shortcodes {
 	public function __construct() {
 		add_shortcode( 'recent_posts_by_category', array( $this, 'ak_recent_posts_by_category_shortcode' ) );
 		add_shortcode( 'portfolio_submission_form', array( $this, 'ak_portfolio_submission_form_shortcode' ) );
+		add_shortcode( 'sent_emails_details', array( $this, 'ak_sent_emails_details_shortcode' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'ak_enqueue_portfolio_submission_css' ) );
 		add_action( 'wp_enqueue_scripts', array( $this, 'ak_enqueue_akila_plugin_js' ) );
 		add_action( 'wp_ajax_portfolio_submission', array( $this, 'ak_process_portfolio_submission' ) );
@@ -115,9 +116,15 @@ class Shortcodes {
 		}
 	}
 
+
 	/**
-	* Process portfolio submission form.
-	*/
+	 * Process portfolio submission form.
+	 *
+	 * This function handles the submission of portfolio form data.
+	 * It validates the submitted data, creates a portfolio post, and sends an email notification.
+	 *
+	 * @return void
+	 */
 	public function ak_process_portfolio_submission() {
 		if ( isset( $_POST['portfolio_submission_nonce_field'] ) && wp_verify_nonce( $_POST['portfolio_submission_nonce_field'], 'portfolio_submission_nonce' ) ) {
 			if ( isset( $_POST['name'] ) && isset( $_POST['email'] ) && isset( $_POST['phone'] ) ) {
@@ -128,7 +135,6 @@ class Shortcodes {
 				$phone        = sanitize_text_field( $_POST['phone'] );
 				$address      = sanitize_textarea_field( $_POST['address'] );
 
-				// Validate email and phone
 				$email_pattern = '/^[^\s@]+@[^\s@]+\.[^\s@]+$/';
 				$phone_pattern = '/^\d{10}$/';
 				if ( ! preg_match( $email_pattern, $email ) || ! preg_match( $phone_pattern, $phone ) ) {
@@ -158,10 +164,69 @@ class Shortcodes {
 				if ( is_wp_error( $post_id ) ) {
 					echo esc_html__( 'Error: ', 'akila-portfolio' ) . esc_html( $post_id->get_error_message() );
 				} else {
-					echo esc_html__( 'Success! Your portfolio has been submitted.', 'akila-portfolio' );
+					$to      = $email;
+					$subject = 'Portfolio Submission Confirmation';
+					$message = 'Thank you for submitting your portfolio. We have received your details and will review them shortly.';
+					$headers = array( 'Content-Type: text/html; charset=UTF-8' );
+
+					$sent = wp_mail( $to, $subject, $message, $headers );
+
+					if ( $sent ) {
+						echo esc_html__( 'Success! Your portfolio has been submitted. An email confirmation has been sent.', 'akila-portfolio' );
+					} else {
+						echo esc_html__( 'Error sending email confirmation.', 'akila-portfolio' );
+						// Output any errors for debugging
+						echo '<pre>';
+						print_r( error_get_last() );
+						echo '</pre>';
+					}
 				}
 			}
 		}
 		die();
+	}
+	/**
+	 * Shortcode to display sent emails details.
+	 *
+	 * Retrieves the details of sent emails and generates HTML content to display them.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @return string HTML content for displaying sent emails details.
+	 */
+	public function ak_sent_emails_details_shortcode() {
+		$sent_emails = get_posts(
+			array(
+				'post_type'      => 'portfolio',
+				'posts_per_page' => -1,
+				'meta_query'     => array(
+					array(
+						'key'     => 'mail',
+						'compare' => 'EXISTS', // Check if the 'mail' meta key exists
+					),
+				),
+			)
+		);
+
+		$output  = '<div class="sent-emails-details">';
+		$output .= '<h2>Sent Emails Details</h2>';
+		$output .= '<ul>';
+
+		foreach ( $sent_emails as $email ) {
+			$recipient_email = get_post_meta( $email->ID, 'email', true );
+			$sent_time       = get_post_meta( $email->ID, 'mail', true );
+
+			$sent_time = gmdate( 'F j, Y g:i a', strtotime( $sent_time ) );
+
+			$output .= '<li>';
+			$output .= 'Recipient Email: ' . $recipient_email . '<br>';
+			$output .= 'Sent Time: ' . $sent_time;
+			$output .= '</li>';
+		}
+
+		$output .= '</ul>';
+		$output .= '</div>';
+
+		return $output;
 	}
 }

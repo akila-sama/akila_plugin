@@ -35,7 +35,6 @@ new APortfolio\Shortcodes(); // Initializes the Shortcodes class for managing sh
 new APortfolio\Button(); // Initializes the Button class for adding a custom button in the plugins page
 new APortfolio\Endpoints(); // Initializes the Endpoints class for custom REST API endpoints
 
-
 /**
  * Function to run on plugin activation.
  * This function sets the permalink structure to '/%postname%/' and flushes the rewrite rules.
