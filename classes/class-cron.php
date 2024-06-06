@@ -25,16 +25,20 @@ class Cron {
 	 * Schedules the event to send email notifications daily if not already scheduled.
 	 */
 	public function schedule_cron_event() {
-		if ( ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
+		// Check if email notifications are enabled
+		$email_notifications = get_option( 'akila_email_notifications', 1 );
+		// Schedule cron event only if email notifications are enabled
+		if ( $email_notifications && ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
 			wp_schedule_event( time(), 'daily', 'akila_portfolio_send_email_notifications' );
 		}
 	}
 
+
 	/**
 	 * Send email notifications.
 	 *
-	 * Retrieves all portfolio posts, extracts email addresses from post meta,
-	 * and sends daily notification emails.
+	 * Retrieves all published portfolio posts and sends an email notification
+	 * to the email addresses associated with each post.
 	 */
 	public function send_email_notifications() {
 		$portfolio_posts = get_posts(
@@ -54,6 +58,7 @@ class Cron {
 				$message = esc_html__( 'This is a daily notification for your portfolio post.', 'your-text-domain' );
 
 				wp_mail( $email, $subject, $message );
+
 			}
 		}
 	}
