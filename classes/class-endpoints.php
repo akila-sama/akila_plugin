@@ -22,12 +22,12 @@ class Endpoints {
 			'v1',
 			'/custom-endpoint/',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'ak_my_custom_endpoint_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'ak_my_custom_endpoint_callback' ),
+				'permission_callback' => '__return_true', // Allow public access
 			)
 		);
 	}
-
 	/**
 	 * Callback function for custom endpoint.
 	 *
