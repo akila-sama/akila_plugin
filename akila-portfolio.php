@@ -15,7 +15,6 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define Akila Portfolio plugin directory constant if not already defined.
  */
-
 if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
 	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
@@ -26,14 +25,12 @@ require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-shortcodes.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-button.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-endpoints.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-cron.php';
-require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-settings.php';
 
 new APortfolio\Portfolio(); // Initializes the Portfolio class for handling portfolio items
 new APortfolio\PluginPage(); // Initializes the PluginPage class for admin page enhancements
 new APortfolio\Shortcodes(); // Initializes the Shortcodes class for managing shortcodes
 new APortfolio\Button(); // Initializes the Button class for adding a custom button in the plugins page
 new APortfolio\Endpoints(); // Initializes the Endpoints class for custom REST API endpoints
-
 
 /**
  * Function to run on plugin activation.

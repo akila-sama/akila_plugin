@@ -211,3 +211,34 @@ jQuery(document).ready(function ($) {
 		});
 	});
 });
+
+
+//email setting page 
+jQuery(document).ready(function($) {
+	$("#akila-settings-form").on("submit", function(e) {
+		e.preventDefault();
+
+		var data = {
+			action: "save_settings",
+			security: ak_my_plugin.nonce,
+			email_notifications: $("#akila_email_notifications").is(":checked") ? 1 : 0,
+			notification_frequency: $("#akila_notification_frequency").val()
+		};
+
+		$.ajax({
+			type: "POST",
+			url: ak_my_plugin.ajax_url,
+			data: data,
+			success: function(response) {
+				if (response.success) {
+					$("#akila-message").html('<div class="notice notice-success"><p>' + response.data.message + '</p></div>');
+				} else {
+					$("#akila-message").html('<div class="notice notice-error"><p>' + response.data.message + '</p></div>');
+				}
+			},
+			error: function(xhr, status, error) {
+				console.error(xhr.responseText);
+			}
+		});
+	});
+});

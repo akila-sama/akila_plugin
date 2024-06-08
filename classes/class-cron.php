@@ -26,9 +26,9 @@ class Cron {
 	 */
 	public function schedule_cron_event() {
 		// Check if email notifications are enabled
-		$email_notifications = get_option( 'akila_email_notifications', 1 );
+		$options = get_option( 'akila_portfolio_notification_options', array() );
 		// Schedule cron event only if email notifications are enabled
-		if ( $email_notifications && ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
+		if ( $options['email_notifications'] && ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
 			wp_schedule_event( time(), 'daily', 'akila_portfolio_send_email_notifications' );
 		}
 	}
