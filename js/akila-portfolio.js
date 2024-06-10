@@ -18,7 +18,7 @@ jQuery(document).ready(function ($) {
 			data: {
 				action: "save_custom_data_ajax",
 				custom_data: customData,
-				security: my_ajax_object.security, // Pass nonce
+				security: ak_my_plugin.nonce, // Pass nonce
 			},
 			/**
 			 * Handles success response from AJAX request.
@@ -57,11 +57,8 @@ jQuery(document).ready(function ($) {
 	 */
 	function getPortfolioPosts () {
 		$.ajax({
-			url: ak_my_plugin.ajax_url, // Use the global variable ajaxurl for AJAX requests
-			method: "POST",
-			data: {
-				action: "get_portfolio_posts",
-			},
+			url: ak_my_plugin.rest_url + 'akila-portfolio/v1/portfolio-posts', // Use the global variable ajaxurl for AJAX requests
+			method: "GET",
 			/**
 			 * Handles success response from AJAX request to retrieve portfolio posts.
 			 *
@@ -69,7 +66,10 @@ jQuery(document).ready(function ($) {
 			 */
 			success: function (response) {
 				if (response) {
-					$("#portfolio-posts-container").html(response);
+					const $tmpl = wp.template( 'portfolio-post' );
+					$("#portfolio-posts-container").html(
+						$tmpl( response )
+					);
 				} else {
 					$("#portfolio-posts-container").html(
 						"<p>No portfolio posts found.</p>"
@@ -90,7 +90,9 @@ jQuery(document).ready(function ($) {
 	}
 
 	// Call function to retrieve portfolio posts when the page loads
-	getPortfolioPosts();
+	if ( 'plugin-details_page_ak_custom-submenu-slug' === pagenow ) {
+		getPortfolioPosts();
+	}
 
 	/**
 	 * Handles click event on delete portfolio post button.
@@ -104,7 +106,7 @@ jQuery(document).ready(function ($) {
 				data: {
 					action: "delete_portfolio_post",
 					post_id: postId,
-					nonce: submenu_ajax_object.nonce, // Pass nonce here
+					nonce: ak_my_plugin.nonce, // Pass nonce here
 				},
 				/**
 				 * Handles success response from AJAX request to delete portfolio post.
