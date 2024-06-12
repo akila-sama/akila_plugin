@@ -2,6 +2,9 @@
 
 namespace APortfolio;
 
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-submenu.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-settings.php';
+
 if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_URL' ) ) {
 	define( 'AKILA_PORTFOLIO_PLUGIN_URL', plugin_dir_url( __FILE__ ) );
 }
@@ -17,60 +20,14 @@ class PluginPage {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'ak_custom_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'ak_enqueue_my_plugin_ajax_script' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'ak_admin_enqueue_scripts' ) );
 		add_action( 'wp_ajax_save_custom_data_ajax', array( $this, 'save_custom_data_ajax' ) );
-		add_action( 'admin_menu', array( $this, 'ak_custom_submenu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'ak_enqueue_submenu_css' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'ak_enqueue_submenu_js' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'ak_enqueue_submenu_ajax_script' ) );
 		add_action( 'wp_ajax_get_portfolio_posts', array( $this, 'ak_get_portfolio_posts_callback' ) );
 		add_action( 'wp_ajax_delete_portfolio_post', array( $this, 'ak_delete_portfolio_post_callback' ) );
-	}
 
-	/**
-	 * Enqueue CSS file for plugin details and REST API page in the admin area.
-	 */
-	public function ak_enqueue_submenu_css() {
-		$screen = get_current_screen();
-		if ( $screen && ( 'toplevel_page_ak_custom-slug' === $screen->id || 'plugin-details_page_ak_custom-submenu-slug' === $screen->id ) ) {
-			wp_enqueue_style( 'portfolio-submission-form', AKILA_PORTFOLIO_PLUGIN_URL . '../css/portfolio-submission-form.css', array(), '1.0' );
-		}
+		new Submenu();
+		new Settings();
 	}
-
-	/**
-	 * Enqueue JavaScript file for plugin details and REST API page in the admin area.
-	 */
-	public function ak_enqueue_submenu_js() {
-		$screen = get_current_screen();
-		if ( $screen && ( 'toplevel_page_custom-slug' === $screen->id || 'toplevel_page_ak_custom-slug' === $screen->id || 'plugin-details_page_ak_custom-submenu-slug' === $screen->id ) ) {
-			wp_enqueue_script( 'akila-portfolio-js', AKILA_PORTFOLIO_PLUGIN_URL . '../js/akila-portfolio.js', array( 'jquery' ), '1.0.0', true );
-			wp_localize_script(
-				'akila-portfolio-js',
-				'ak_my_plugin',
-				array(
-					'ajax_url' => admin_url( 'admin-ajax.php' ),
-				)
-			);
-		}
-	}
-
-	/**
-	 * Enqueue JavaScript file for AJAX request in the admin area only.
-	 */
-	public function ak_enqueue_submenu_ajax_script() {
-		if ( is_admin() ) {
-			wp_enqueue_script( 'submenu-ajax-script', AKILA_PORTFOLIO_PLUGIN_URL . '../js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
-			wp_localize_script(
-				'submenu-ajax-script',
-				'submenu_ajax_object',
-				array(
-					'rest_url' => esc_url_raw( rest_url() ),
-					'nonce'    => wp_create_nonce( 'delete_portfolio_post_nonce' ),
-				)
-			);
-		}
-	}
-
 
 	/**
 	 * Add a custom menu page.
@@ -88,6 +45,7 @@ class PluginPage {
 		);
 	}
 
+
 	/**
 	 * Render plugin details.
 	 * Callback function to display plugin details in the custom menu page.
@@ -97,17 +55,34 @@ class PluginPage {
 	}
 
 	/**
-	 * Enqueue AJAX script.
-	 * Enqueues JavaScript file for handling AJAX requests in the admin area.
+	 * Enqueue scripts and styles for the admin area.
+	 *
+	 * This function enqueues necessary scripts and styles for the plugin's admin area.
+	 *
+	 * @since 1.0.0
 	 */
-	public function ak_enqueue_my_plugin_ajax_script() {
-		wp_enqueue_script( 'my-plugin-ajax-script', AKILA_PORTFOLIO_PLUGIN_URL . '../js/akila-portfolio.js', array( 'jquery' ), '1.0', true );
+	public function ak_admin_enqueue_scripts() {
+		$screen = get_current_screen();
+
+		$screen_array = array(
+			'plugin-details_page_ak_custom-submenu-slug',
+			'toplevel_page_ak_custom-slug',
+			'plugin-details_page_ak_settings-slug',
+
+		);
+		if ( in_array( $screen->id, $screen_array, true ) ) {
+			wp_enqueue_script( 'akila-portfolio-js', AKILA_PORTFOLIO_PLUGIN_URL . '../js/akila-portfolio.js', array( 'jquery', 'wp-util' ), '1.0.0', true );
+			wp_enqueue_style( 'portfolio-submission-form', AKILA_PORTFOLIO_PLUGIN_URL . '../css/portfolio-submission-form.css', array(), '1.0' );
+
+		}
+
 		wp_localize_script(
-			'my-plugin-ajax-script',
-			'my_ajax_object',
+			'akila-portfolio-js',
+			'ak_my_plugin',
 			array(
-				'ajaxurl'  => admin_url( 'admin-ajax.php' ),
-				'security' => wp_create_nonce( 'custom_data_nonce' ),
+				'ajax_url' => admin_url( 'admin-ajax.php' ),
+				'nonce'    => wp_create_nonce( 'ak_my_plugin_nonce' ),
+				'rest_url' => rest_url(),
 			)
 		);
 	}
@@ -117,7 +92,7 @@ class PluginPage {
 	 * Handles AJAX request to save custom data to the WordPress options table.
 	 */
 	public function save_custom_data_ajax() {
-		check_ajax_referer( 'custom_data_nonce', 'security' );
+		check_ajax_referer( 'ak_my_plugin_nonce', 'security' );
 
 		if ( isset( $_POST['custom_data'] ) ) {
 			update_option( 'custom_data', $_POST['custom_data'] );
@@ -128,63 +103,13 @@ class PluginPage {
 		wp_die();
 	}
 
-	/**
-	* Add a submenu page.
-	* Registers a submenu page for managing REST API functionalities.
-	*/
-	public function ak_custom_submenu() {
-		add_submenu_page(
-			'ak_custom-slug', // Parent menu slug
-			__( 'REST API', 'akila-portfolio' ),
-			__( 'REST API', 'akila-portfolio' ),
-			'manage_options',
-			'ak_custom-submenu-slug', // Menu slug
-			array( $this, 'ak_display_submenu_details' )
-		);
-	}
-
-	/**
-	* Update the submenu page callback function to display portfolio posts.
-	* Callback function to display portfolio posts in the submenu page.
-	*/
-	public function ak_display_submenu_details() {
-		?>
-		<div class="wrap">
-			<h2><?php esc_html_e( 'Portfolio Posts', 'akila-portfolio' ); ?></h2>
-			<div id="portfolio-posts-container"></div> <!-- Container to display portfolio posts -->
-			<div id="portfolio-posts-message"></div> <!-- Container for success/error messages -->
-		</div>
-		<?php
-	}
-
-	/**
-	 * AJAX function to retrieve portfolio posts.
-	 * Handles AJAX request to retrieve portfolio posts.
-	 */
-	public function ak_get_portfolio_posts_callback() {
-		$args = array(
-			'post_type'      => 'portfolio',
-			'posts_per_page' => -1,
-		);
-
-		$query = new \WP_Query( $args );
-
-		if ( $query->have_posts() ) {
-			include AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/retrieve-portfolio-posts.php';
-
-		} else {
-			echo '<p>' . esc_html__( 'No portfolio posts found.', 'akila-portfolio' ) . '</p>';
-		}
-
-		die();
-	}
 
 	/**
 	 * AJAX function to delete portfolio post.
 	 * Handles AJAX request to delete a portfolio post.
 	 */
 	public function ak_delete_portfolio_post_callback() {
-		check_ajax_referer( 'delete_portfolio_post_nonce', 'nonce' );
+		check_ajax_referer( 'ak_my_plugin_nonce', 'nonce' );
 
 		if ( isset( $_POST['post_id'] ) ) {
 			$post_id = absint( $_POST['post_id'] );

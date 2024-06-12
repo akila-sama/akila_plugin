@@ -1,6 +1,6 @@
 /**
  * Handles AJAX request to save custom data.
- *
+ * @since 1.0.0
  * @param {object} $ - jQuery object.
  */
 jQuery(document).ready(function ($) {
@@ -18,7 +18,7 @@ jQuery(document).ready(function ($) {
 			data: {
 				action: "save_custom_data_ajax",
 				custom_data: customData,
-				security: my_ajax_object.security, // Pass nonce
+				security: ak_my_plugin.nonce, // Pass nonce
 			},
 			/**
 			 * Handles success response from AJAX request.
@@ -48,7 +48,7 @@ jQuery(document).ready(function ($) {
 
 /**
  * Handles AJAX requests to retrieve and delete portfolio posts.
- *
+ * @since 1.0.0
  * @param {object} $ - jQuery object.
  */
 jQuery(document).ready(function ($) {
@@ -57,11 +57,8 @@ jQuery(document).ready(function ($) {
 	 */
 	function getPortfolioPosts () {
 		$.ajax({
-			url: ak_my_plugin.ajax_url, // Use the global variable ajaxurl for AJAX requests
-			method: "POST",
-			data: {
-				action: "get_portfolio_posts",
-			},
+			url: ak_my_plugin.rest_url + 'akila-portfolio/v1/portfolio-posts', // Use the global variable ajaxurl for AJAX requests
+			method: "GET",
 			/**
 			 * Handles success response from AJAX request to retrieve portfolio posts.
 			 *
@@ -69,7 +66,10 @@ jQuery(document).ready(function ($) {
 			 */
 			success: function (response) {
 				if (response) {
-					$("#portfolio-posts-container").html(response);
+					const $tmpl = wp.template('portfolio-post');
+					$("#portfolio-posts-container").html(
+						$tmpl(response)
+					);
 				} else {
 					$("#portfolio-posts-container").html(
 						"<p>No portfolio posts found.</p>"
@@ -90,12 +90,14 @@ jQuery(document).ready(function ($) {
 	}
 
 	// Call function to retrieve portfolio posts when the page loads
-	getPortfolioPosts();
+	if ('plugin-details_page_ak_custom-submenu-slug' === pagenow) {
+		getPortfolioPosts();
+	}
 
 	/**
 	 * Handles click event on delete portfolio post button.
 	 */
-	$(document).off( "click", ".delete-portfolio-post" ).on("click", ".delete-portfolio-post", function () {
+	$(document).off("click", ".delete-portfolio-post").on("click", ".delete-portfolio-post", function () {
 		var postId = $(this).data("post-id");
 		if (confirm("Are you sure you want to delete this portfolio post?")) {
 			$.ajax({
@@ -104,7 +106,7 @@ jQuery(document).ready(function ($) {
 				data: {
 					action: "delete_portfolio_post",
 					post_id: postId,
-					nonce: submenu_ajax_object.nonce, // Pass nonce here
+					nonce: ak_my_plugin.nonce, // Pass nonce here
 				},
 				/**
 				 * Handles success response from AJAX request to delete portfolio post.
@@ -140,7 +142,7 @@ jQuery(document).ready(function ($) {
 
 /**
  * Handles form submission via AJAX for portfolio submission.
- *
+ * @since 1.0.0
  * @param {object} $ - jQuery object.
  */
 jQuery(document).ready(function ($) {
@@ -208,6 +210,49 @@ jQuery(document).ready(function ($) {
 					});
 				}, 10000); // 5000 milliseconds = 5 seconds
 			},
+		});
+	});
+});
+
+
+/**
+ * Handles JavaScript functionalities for Akila Portfolio settings page.
+ *
+ * @since 1.0.0
+ */
+
+jQuery(document).ready(function ($) {
+	/**
+	 * Handles form submission for saving settings via AJAX.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param {Event} e - The submit event.
+	 */
+	$("#akila-settings-form").on("submit", function (e) {
+		e.preventDefault();
+
+		var data = {
+			action: "save_settings",
+			security: ak_my_plugin.nonce,
+			email_notifications: $("#akila_email_notifications").is(":checked") ? 1 : 0,
+			notification_frequency: $("#akila_notification_frequency").val()
+		};
+
+		$.ajax({
+			type: "POST",
+			url: ak_my_plugin.ajax_url,
+			data: data,
+			success: function (response) {
+				if (response.success) {
+					$("#akila-message").html('<div class="notice notice-success"><p>' + response.data.message + '</p></div>');
+				} else {
+					$("#akila-message").html('<div class="notice notice-error"><p>' + response.data.message + '</p></div>');
+				}
+			},
+			error: function (xhr, status, error) {
+				console.error(xhr.responseText);
+			}
 		});
 	});
 });
