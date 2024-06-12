@@ -175,10 +175,6 @@ class Shortcodes {
 						echo esc_html__( 'Success! Your portfolio has been submitted. An email confirmation has been sent.', 'akila-portfolio' );
 					} else {
 						echo esc_html__( 'Success! Your portfolio has been submitted, but there was an error sending the email confirmation.', 'akila-portfolio' );
-						// Output any errors for debugging
-						echo '<pre>';
-						print_r( error_get_last() );
-						echo '</pre>';
 					}
 				}
 			}

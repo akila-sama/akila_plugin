@@ -34,7 +34,8 @@ if ( $query->have_posts() ) :
 			<td><?php echo esc_html( get_post_meta( get_the_ID(), 'email', true ) ); ?></td>
 			<td><?php echo esc_html( get_post_meta( get_the_ID(), 'phone', true ) ); ?></td>
 			<td><?php echo esc_html( get_post_meta( get_the_ID(), 'address', true ) ); ?></td>
-			<td><?php echo esc_html( get_the_date() . ' ' . get_the_time() ); ?></td>			<td><button class="delete-portfolio-post" data-post-id="<?php echo esc_attr( get_the_ID() ); ?>"><?php esc_html_e( 'Delete', 'akila-portfolio' ); ?></button></td>
+			<td><?php echo esc_html( get_the_date() . ' ' . get_the_time() ); ?></td>
+			<td><button class="delete-portfolio-post" data-post-id="<?php echo esc_attr( get_the_ID() ); ?>"><?php esc_html_e( 'Delete', 'akila-portfolio' ); ?></button></td>
 		</tr>
 		<?php endwhile; ?>
 	</tbody>
