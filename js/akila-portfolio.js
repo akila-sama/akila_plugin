@@ -208,7 +208,7 @@ jQuery(document).ready(function ($) {
 					$("#response_msg").fadeOut("slow", function () {
 						$(this).html("").show(); // Clear the message and reset fade state
 					});
-				}, 5000); // 5000 milliseconds = 5 seconds
+				}, 10000); // 5000 milliseconds = 5 seconds
 			},
 		});
 	});

@@ -104,7 +104,11 @@ class Portfolio {
 	 *
 	 * @return void
 	 */
-	public function ak_render_portfolio_fields() {
+	public function ak_render_portfolio_fields( $post ) {
+		// Retrieve the meta values
+		$client_name = get_post_meta( $post->ID, 'client_name', true );
+		$project_url = get_post_meta( $post->ID, 'project_url', true );
+
 		include AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/portfolio-fields.php';
 	}
 

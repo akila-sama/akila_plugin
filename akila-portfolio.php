@@ -15,6 +15,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Define Akila Portfolio plugin directory constant if not already defined.
  */
+
 if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
 	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }

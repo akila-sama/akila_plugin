@@ -23,12 +23,12 @@ class Endpoints {
 			'akila-portfolio/v1',
 			'/portfolio-posts',
 			array(
-				'methods'  => 'GET',
-				'callback' => array( $this, 'ak_get_portfolio_posts_callback' ),
+				'methods'             => 'GET',
+				'callback'            => array( $this, 'ak_my_custom_endpoint_callback' ),
+				'permission_callback' => '__return_true', // Allow public access
 			)
 		);
 	}
-
 	/**
 	 * Callback function for retrieving portfolio posts.
 	 *
