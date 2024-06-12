@@ -9,11 +9,13 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Settings
  * Handles settings page functionalities for the plugin.
+ * @since 1.0.0
  */
 class Settings {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'ak_add_settings_page_submenu' ) );
+		add_action( 'wp_ajax_save_settings', array( $this, 'ak_save_settings' ) );
 	}
 
 	/**
@@ -82,22 +84,5 @@ class Settings {
 		update_option( 'akila_portfolio_notification_options', $options_array );
 
 		wp_send_json_success( array( 'message' => esc_html__( 'Settings saved successfully.', 'akila-portfolio' ) ) );
-	}
-
-	/**
-	 * Get notification interval based on selected frequency.
-	 *
-	 * @param string $frequency Notification frequency.
-	 * @return string Interval for scheduling cron job.
-	 */
-	private function ak_get_notification_interval( $frequency ) {
-		switch ( $frequency ) {
-			case 'weekly':
-				return 'weekly';
-			case 'monthly':
-				return 'monthly';
-			default:
-				return 'daily';
-		}
 	}
 }

@@ -1,3 +1,15 @@
+<?php
+/**
+ * Template File: tmpl-portfolio-posts.php
+ *
+ * Description: This template file generates HTML markup for displaying portfolio posts in a table format.
+ * It utilizes Underscore.js templating to render the data received from the REST API endpoint.
+ *
+ * @package Akila_Portfolio
+ * @subpackage Templates
+ */
+?>
+
 <script type="text/html" id="tmpl-portfolio-post">
 <table>
 	<thead>

@@ -1,6 +1,6 @@
 /**
  * Handles AJAX request to save custom data.
- *
+ * @since 1.0.0
  * @param {object} $ - jQuery object.
  */
 jQuery(document).ready(function ($) {
@@ -48,7 +48,7 @@ jQuery(document).ready(function ($) {
 
 /**
  * Handles AJAX requests to retrieve and delete portfolio posts.
- *
+ * @since 1.0.0
  * @param {object} $ - jQuery object.
  */
 jQuery(document).ready(function ($) {
@@ -66,9 +66,9 @@ jQuery(document).ready(function ($) {
 			 */
 			success: function (response) {
 				if (response) {
-					const $tmpl = wp.template( 'portfolio-post' );
+					const $tmpl = wp.template('portfolio-post');
 					$("#portfolio-posts-container").html(
-						$tmpl( response )
+						$tmpl(response)
 					);
 				} else {
 					$("#portfolio-posts-container").html(
@@ -90,14 +90,14 @@ jQuery(document).ready(function ($) {
 	}
 
 	// Call function to retrieve portfolio posts when the page loads
-	if ( 'plugin-details_page_ak_custom-submenu-slug' === pagenow ) {
+	if ('plugin-details_page_ak_custom-submenu-slug' === pagenow) {
 		getPortfolioPosts();
 	}
 
 	/**
 	 * Handles click event on delete portfolio post button.
 	 */
-	$(document).off( "click", ".delete-portfolio-post" ).on("click", ".delete-portfolio-post", function () {
+	$(document).off("click", ".delete-portfolio-post").on("click", ".delete-portfolio-post", function () {
 		var postId = $(this).data("post-id");
 		if (confirm("Are you sure you want to delete this portfolio post?")) {
 			$.ajax({
@@ -142,7 +142,7 @@ jQuery(document).ready(function ($) {
 
 /**
  * Handles form submission via AJAX for portfolio submission.
- *
+ * @since 1.0.0
  * @param {object} $ - jQuery object.
  */
 jQuery(document).ready(function ($) {
@@ -215,9 +215,21 @@ jQuery(document).ready(function ($) {
 });
 
 
-//email setting page 
-jQuery(document).ready(function($) {
-	$("#akila-settings-form").on("submit", function(e) {
+/**
+ * Handles JavaScript functionalities for Akila Portfolio settings page.
+ *
+ * @since 1.0.0
+ */
+
+jQuery(document).ready(function ($) {
+	/**
+	 * Handles form submission for saving settings via AJAX.
+	 *
+	 * @since 1.0.0
+	 *
+	 * @param {Event} e - The submit event.
+	 */
+	$("#akila-settings-form").on("submit", function (e) {
 		e.preventDefault();
 
 		var data = {
@@ -231,14 +243,14 @@ jQuery(document).ready(function($) {
 			type: "POST",
 			url: ak_my_plugin.ajax_url,
 			data: data,
-			success: function(response) {
+			success: function (response) {
 				if (response.success) {
 					$("#akila-message").html('<div class="notice notice-success"><p>' + response.data.message + '</p></div>');
 				} else {
 					$("#akila-message").html('<div class="notice notice-error"><p>' + response.data.message + '</p></div>');
 				}
 			},
-			error: function(xhr, status, error) {
+			error: function (xhr, status, error) {
 				console.error(xhr.responseText);
 			}
 		});

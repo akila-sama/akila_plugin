@@ -20,12 +20,10 @@ class PluginPage {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'ak_custom_menu' ) );
-		add_action( 'admin_enqueue_scripts', array( $this, 'admin_enqueue_scripts' ) );
+		add_action( 'admin_enqueue_scripts', array( $this, 'ak_admin_enqueue_scripts' ) );
 		add_action( 'wp_ajax_save_custom_data_ajax', array( $this, 'save_custom_data_ajax' ) );
 		add_action( 'wp_ajax_get_portfolio_posts', array( $this, 'ak_get_portfolio_posts_callback' ) );
 		add_action( 'wp_ajax_delete_portfolio_post', array( $this, 'ak_delete_portfolio_post_callback' ) );
-		add_action( 'admin_menu', array( $this, 'ak_add_settings_page_submenu' ) );
-		add_action( 'wp_ajax_save_settings', array( $this, 'ak_save_settings' ) );
 
 		new Submenu();
 		new Settings();
@@ -63,7 +61,7 @@ class PluginPage {
 	 *
 	 * @since 1.0.0
 	 */
-	public function admin_enqueue_scripts() {
+	public function ak_admin_enqueue_scripts() {
 		$screen = get_current_screen();
 
 		$screen_array = array(

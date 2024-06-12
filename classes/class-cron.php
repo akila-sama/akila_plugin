@@ -5,6 +5,8 @@ namespace APortfolio;
  * Class Cron
  *
  * Handles scheduling and sending of email notifications for portfolio posts.
+ *
+ * @since 1.0.0
  */
 class Cron {
 
@@ -12,6 +14,8 @@ class Cron {
 	 * Cron constructor.
 	 *
 	 * Registers actions on initialization.
+	 *
+	 * @since 1.0.0
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'schedule_cron_event' ) );
@@ -23,12 +27,14 @@ class Cron {
 	 * Schedule cron event.
 	 *
 	 * Schedules the event to send email notifications daily if not already scheduled.
+	 *
+	 * @since 1.0.0
 	 */
 	public function schedule_cron_event() {
 		// Check if email notifications are enabled
 		$options = get_option( 'akila_portfolio_notification_options', array() );
 		// Schedule cron event only if email notifications are enabled
-		if ( $options['email_notifications'] && ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
+		if ( isset( $options['email_notifications'] ) && $options['email_notifications'] && ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
 			wp_schedule_event( time(), 'daily', 'akila_portfolio_send_email_notifications' );
 		}
 	}
@@ -39,6 +45,8 @@ class Cron {
 	 *
 	 * Retrieves all published portfolio posts and sends an email notification
 	 * to the email addresses associated with each post.
+	 *
+	 * @since 1.0.0
 	 */
 	public function send_email_notifications() {
 		$portfolio_posts = get_posts(

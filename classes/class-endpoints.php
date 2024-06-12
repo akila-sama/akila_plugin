@@ -20,9 +20,8 @@ class Endpoints {
 	 */
 	public function ak_register_custom_endpoints() {
 		register_rest_route(
-			'akila-portfolio/v1', // Namespace and version for your endpoint
-			'/portfolio-posts', // Endpoint path
-			//http://localhost/wp_plugin_dev/wp-json/akila-portfolio/v1/portfolio-posts
+			'akila-portfolio/v1',
+			'/portfolio-posts',
 			array(
 				'methods'  => 'GET',
 				'callback' => array( $this, 'ak_get_portfolio_posts_callback' ),

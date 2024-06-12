@@ -9,6 +9,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 /**
  * Class Submenu
  * Handles submenu functionalities for the plugin.
+ * @since 1.0.0
  */
 class Submenu {
 
@@ -19,6 +20,7 @@ class Submenu {
 	/**
 	 * Add a submenu page.
 	 * Registers a submenu page for managing REST API functionalities.
+	 * @since 1.0.0
 	 */
 	public function ak_custom_submenu() {
 		add_submenu_page(
@@ -34,6 +36,7 @@ class Submenu {
 	/**
 	 * Update the submenu page callback function to display portfolio posts.
 	 * Callback function to display portfolio posts in the submenu page.
+	 * @since 1.0.0
 	 */
 	public function ak_display_submenu_details() {
 		?>
