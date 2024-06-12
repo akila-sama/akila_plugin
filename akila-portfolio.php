@@ -16,8 +16,6 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Define Akila Portfolio plugin directory constant if not already defined.
  */
 
-
-
 if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
 	define( 'AKILA_PORTFOLIO_PLUGIN_DIR', plugin_dir_path( __FILE__ ) );
 }
@@ -34,7 +32,6 @@ new APortfolio\PluginPage(); // Initializes the PluginPage class for admin page 
 new APortfolio\Shortcodes(); // Initializes the Shortcodes class for managing shortcodes
 new APortfolio\Button(); // Initializes the Button class for adding a custom button in the plugins page
 new APortfolio\Endpoints(); // Initializes the Endpoints class for custom REST API endpoints
-
 
 /**
  * Function to run on plugin activation.
