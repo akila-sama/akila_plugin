@@ -19,26 +19,59 @@ class Cron {
 	 */
 	public function __construct() {
 		add_action( 'init', array( $this, 'schedule_cron_event' ) );
-
 		add_action( 'akila_portfolio_send_email_notifications', array( $this, 'send_email_notifications' ) );
+
+		// Add custom cron schedule
+		add_filter( 'cron_schedules', array( $this, 'add_custom_cron_schedules' ) );
+	}
+
+	/**
+	 * Add custom cron schedules.
+	 *
+	 * @param array $schedules The existing schedules.
+	 * @return array The modified schedules.
+	 */
+	public function add_custom_cron_schedules( $schedules ) {
+		$schedules['monthly'] = array(
+			'interval' => 30 * DAY_IN_SECONDS, // Approximate monthly interval
+			'display'  => __( 'Once a Month', 'akila-portfolio' ),
+		);
+		return $schedules;
+	}
+
+	/**
+	 * Unschedule existing cron event.
+	 *
+	 * Unschedules the existing cron event if it is scheduled.
+	 *
+	 * @since 1.0.0
+	 */
+	public function unschedule_cron_event() {
+		$timestamp = wp_next_scheduled( 'akila_portfolio_send_email_notifications' );
+		if ( $timestamp ) {
+			wp_unschedule_event( $timestamp, 'akila_portfolio_send_email_notifications' );
+		}
 	}
 
 	/**
 	 * Schedule cron event.
 	 *
-	 * Schedules the event to send email notifications daily if not already scheduled.
+	 * Schedules the event to send email notifications based on the selected frequency.
 	 *
 	 * @since 1.0.0
 	 */
 	public function schedule_cron_event() {
-		// Check if email notifications are enabled
-		$options = get_option( 'akila_portfolio_notification_options', array() );
-		// Schedule cron event only if email notifications are enabled
-		if ( isset( $options['email_notifications'] ) && $options['email_notifications'] && ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
-			wp_schedule_event( time(), 'daily', 'akila_portfolio_send_email_notifications' );
+		$this->unschedule_cron_event();
+
+		$options   = get_option( 'akila_portfolio_notification_options', array() );
+		$frequency = isset( $options['notification_frequency'] ) ? $options['notification_frequency'] : 'daily';
+
+		if ( isset( $options['email_notifications'] ) && $options['email_notifications'] ) {
+			if ( ! wp_next_scheduled( 'akila_portfolio_send_email_notifications' ) ) {
+				wp_schedule_event( time(), $frequency, 'akila_portfolio_send_email_notifications' );
+			}
 		}
 	}
-
 
 	/**
 	 * Send email notifications.
@@ -62,11 +95,10 @@ class Cron {
 			$email = get_post_meta( $post_id, 'email', true );
 
 			if ( ! empty( $email ) ) {
-				$subject = esc_html__( 'Portfolio Notification', 'your-text-domain' );
-				$message = esc_html__( 'This is a daily notification for your portfolio post.', 'your-text-domain' );
+				$subject = esc_html__( 'Portfolio Notification', 'akila-portfolio' );
+				$message = esc_html__( 'This is a notification for your portfolio post.', 'akila-portfolio' );
 
 				wp_mail( $email, $subject, $message );
-
 			}
 		}
 	}

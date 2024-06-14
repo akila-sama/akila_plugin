@@ -10,6 +10,12 @@
  */
 ?>
 
+<div class="wrap">
+	<h2><?php esc_html_e( 'Portfolio Posts', 'akila-portfolio' ); ?></h2>
+	<div id="portfolio-posts-container"></div> <!-- Container to display portfolio posts -->
+	<div id="portfolio-posts-message"></div> <!-- Container for success/error messages -->
+</div>
+
 <script type="text/html" id="tmpl-portfolio-post">
 <table>
 	<thead>

@@ -11,7 +11,7 @@ if ( ! defined( 'ABSPATH' ) ) {
  * Handles submenu functionalities for the plugin.
  * @since 1.0.0
  */
-class Submenu {
+class Restapi {
 
 	public function __construct() {
 		add_action( 'admin_menu', array( $this, 'ak_custom_submenu' ) );
@@ -39,14 +39,6 @@ class Submenu {
 	 * @since 1.0.0
 	 */
 	public function ak_display_submenu_details() {
-		?>
-		<div class="wrap">
-			<h2><?php esc_html_e( 'Portfolio Posts', 'akila-portfolio' ); ?></h2>
-			<div id="portfolio-posts-container"></div> <!-- Container to display portfolio posts -->
-			<div id="portfolio-posts-message"></div> <!-- Container for success/error messages -->
-		</div>
-		<?php
-
 		include AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/tmpl-portfolio-post.php';
 	}
 }

@@ -1,6 +1,5 @@
 <?php
 
-
 namespace APortfolio;
 
 /**
@@ -24,7 +23,7 @@ class Endpoints {
 			'/portfolio-posts',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'ak_my_custom_endpoint_callback' ),
+				'callback'            => array( $this, 'ak_get_portfolio_posts_callback' ),
 				'permission_callback' => '__return_true', // Allow public access
 			)
 		);
