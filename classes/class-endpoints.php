@@ -1,11 +1,11 @@
 <?php
 
-
 namespace APortfolio;
 
 /**
  * Class Endpoints
  * Registers and handles custom REST API endpoints.
+ * @since 1.0.0
  */
 class Endpoints {
 
@@ -16,6 +16,7 @@ class Endpoints {
 	/**
 	 * Register custom REST API endpoints.
 	 *
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ak_register_custom_endpoints() {
@@ -24,7 +25,7 @@ class Endpoints {
 			'/portfolio-posts',
 			array(
 				'methods'             => 'GET',
-				'callback'            => array( $this, 'ak_my_custom_endpoint_callback' ),
+				'callback'            => array( $this, 'ak_get_portfolio_posts_callback' ),
 				'permission_callback' => '__return_true', // Allow public access
 			)
 		);
@@ -32,6 +33,7 @@ class Endpoints {
 	/**
 	 * Callback function for retrieving portfolio posts.
 	 *
+	 * @since 1.0.0
 	 * @param \WP_REST_Request $request The request data.
 	 * @return \WP_REST_Response The response data.
 	 */

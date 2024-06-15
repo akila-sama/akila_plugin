@@ -83,6 +83,10 @@ class Settings {
 
 		update_option( 'akila_portfolio_notification_options', $options_array );
 
+		// Reschedule the cron event based on the new settings
+		$cron = new Cron();
+		$cron->schedule_cron_event();
+
 		wp_send_json_success( array( 'message' => esc_html__( 'Settings saved successfully.', 'akila-portfolio' ) ) );
 	}
 }

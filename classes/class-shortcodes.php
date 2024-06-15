@@ -6,6 +6,7 @@ namespace APortfolio;
  * Class Shortcodes
  *
  * Handles the registration and processing of shortcodes related to the portfolio.
+ * @since 1.0.0
  */
 class Shortcodes {
 
@@ -22,6 +23,7 @@ class Shortcodes {
 	/**
 	* Shortcode to display recent posts by category.
 	*
+	* @since 1.0.0
 	* @param array $atts Shortcode attributes.
 	* @return string HTML output.
 	*/
@@ -59,7 +61,7 @@ class Shortcodes {
 
 	/**
 	* Shortcode for portfolio submission form.
-	*
+	* @since 1.0.0
 	* @param array $atts Shortcode attributes.
 	* @return string HTML content for the portfolio submission form.
 	*/
@@ -79,7 +81,7 @@ class Shortcodes {
 
 	/**
 	* Check if the shortcode exists in the content.
-	*
+	* @since 1.0.0
 	* @param string $shortcode Shortcode to check for.
 	* @return bool True if the shortcode exists, false otherwise.
 	*/
@@ -92,6 +94,7 @@ class Shortcodes {
 	}
 
 	/**
+	* @since 1.0.0
 	* Enqueue CSS file for the portfolio submission form on the front-end only if the shortcode is present.
 	*/
 	public function ak_enqueue_portfolio_submission_css() {
@@ -101,6 +104,7 @@ class Shortcodes {
 	}
 
 	/**
+	 * @since 1.0.0
 	* Enqueue JavaScript file for the plugin on the front-end only if the shortcode is present.
 	*/
 	public function ak_enqueue_akila_plugin_js() {
@@ -123,6 +127,7 @@ class Shortcodes {
 	 * This function handles the submission of portfolio form data.
 	 * It validates the submitted data, creates a portfolio post, and sends an email notification.
 	 *
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ak_process_portfolio_submission() {

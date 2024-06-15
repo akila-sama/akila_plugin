@@ -7,12 +7,14 @@ namespace APortfolio;
  *
  * Handles the registration of the Portfolio custom post type,
  * as well as custom fields and columns for the Portfolio items.
+ * @since 1.0.0
  */
 class Portfolio {
 
 	/**
 	 * Constructor.
 	 *
+	 * @since 1.0.0
 	 * Initializes the hooks for registering custom post type,
 	 * adding custom fields, saving custom fields, and customizing columns.
 	 */
@@ -30,6 +32,7 @@ class Portfolio {
 	 *
 	 * Registers the 'portfolio' custom post type with specific labels and arguments.
 	 *
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ak_custom_portfolio_post_type() {
@@ -84,6 +87,7 @@ class Portfolio {
 	 *
 	 * Adds a meta box for custom fields in the 'portfolio' post type.
 	 *
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ak_add_custom_fields() {
@@ -102,6 +106,7 @@ class Portfolio {
 	 *
 	 * Includes the template file for rendering custom fields in the meta box.
 	 *
+	 * @since 1.0.0
 	 * @return void
 	 */
 	public function ak_render_portfolio_fields( $post ) {

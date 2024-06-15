@@ -6,6 +6,7 @@
  * description, author, version, and shortcode details. It also includes forms for
  * submitting portfolio details and custom data.
  *
+ * @since 1.0.0
  * @package APortfolio
  */
 

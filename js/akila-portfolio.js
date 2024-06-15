@@ -139,16 +139,13 @@ jQuery(document).ready(function ($) {
 	});
 });
 
-
 /**
- * Handles form submission via AJAX for portfolio submission.
- * @since 1.0.0
- * @param {object} $ - jQuery object.
+ * Handles form submission for portfolio submissions.
+ * Validates form inputs and sends data via AJAX.
+ *  @since 1.0.0
+ * @param {jQuery} $ - jQuery instance.
  */
 jQuery(document).ready(function ($) {
-	/**
-	 * Handles click event on submit button.
-	 */
 	$("#submit_btn").on("click", function () {
 		var name = $("#name").val();
 		var company_name = $("#company_name").val();
@@ -157,7 +154,6 @@ jQuery(document).ready(function ($) {
 		var phone = $("#phone").val();
 		var address = $("#address").val();
 
-		// Basic form validation
 		if (
 			name.trim() === "" ||
 			email.trim() === "" ||
@@ -170,7 +166,6 @@ jQuery(document).ready(function ($) {
 			return;
 		}
 
-		// Validate email format
 		var emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 		if (!emailPattern.test(email)) {
 			$("#response_msg").html(
@@ -179,7 +174,6 @@ jQuery(document).ready(function ($) {
 			return;
 		}
 
-		// Validate phone format (assuming US phone number format)
 		var phonePattern = /^\d{10}$/;
 		if (!phonePattern.test(phone)) {
 			$("#response_msg").html(
@@ -188,27 +182,23 @@ jQuery(document).ready(function ($) {
 			return;
 		}
 
+		$("#response_msg").html('<div class="info">Please wait...</div>');
+
 		var formData = $("#portfolio_submission_form").serializeArray();
 		formData.push({ name: "company_url", value: company_url });
 		$.ajax({
 			type: "POST",
 			url: ak_my_plugin.ajax_url,
 			data: formData,
-			/**
-			 * Handles success response from AJAX request to submit portfolio form.
-			 *
-			 * @param {string} response - Response from server.
-			 */
 			success: function (response) {
 				$("#response_msg").html(response);
-				$("#portfolio_submission_form")[ 0 ].reset(); // Reset the form
+				$("#portfolio_submission_form")[ 0 ].reset();
 
-				// Hide success message after 5 seconds
 				setTimeout(function () {
 					$("#response_msg").fadeOut("slow", function () {
-						$(this).html("").show(); // Clear the message and reset fade state
+						$(this).html("").show();
 					});
-				}, 10000); // 5000 milliseconds = 5 seconds
+				}, 5000);
 			},
 		});
 	});
