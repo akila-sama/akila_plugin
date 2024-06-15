@@ -5,6 +5,7 @@
  * Version: 1.0
  * Author: Akila
  * Text Domain: akila-portfolio
+ * Domain Path: /languages
  */
 
 // Ensure the file is being called by WordPress
@@ -25,6 +26,7 @@ require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-pluginpage.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-shortcodes.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-endpoints.php';
 require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-cron.php';
+require_once AKILA_PORTFOLIO_PLUGIN_DIR . 'classes/class-metabox.php';
 
 // Initializes the Portfolio class for handling portfolio items
 new APortfolio\Portfolio();
@@ -38,6 +40,8 @@ new APortfolio\Shortcodes();
 // Initializes the Endpoints class for custom REST API endpoints
 new APortfolio\Endpoints();
 
+// Instantiate the Metabox class to add a dashboard widget for displaying recent portfolio items.
+new APortfolio\Metabox();
 /**
  * Function to run on plugin activation.
  * This function sets the permalink structure to '/%postname%/' and flushes the rewrite rules.
