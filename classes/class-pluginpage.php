@@ -15,6 +15,7 @@ if ( ! defined( 'AKILA_PORTFOLIO_PLUGIN_DIR' ) ) {
 /**
  * Class PluginPage
  * Handles the administration interface and AJAX functionality for the plugin.
+ * @since 1.0.0
  */
 class PluginPage {
 
@@ -33,6 +34,7 @@ class PluginPage {
 	/**
 	 * Add a custom menu page.
 	 * Registers a custom menu page for displaying plugin details.
+	 * @since 1.0.0
 	 */
 	public function ak_custom_menu() {
 		add_menu_page(
@@ -49,14 +51,13 @@ class PluginPage {
 	/**
 	 * Add a custom button next to the Deactivate button on the plugins page.
 	 *
+	 * @since 1.0.0
 	 * @param array $links Existing action links.
 	 * @return array Modified action links.
 	 */
 	public function ak_add_custom_plugin_button( $links ) {
 		$custom_plugin_page = admin_url( 'admin.php?page=ak_custom-slug' );
-
 		$button_label = esc_html__( 'Plugin Details', 'akila-portfolio' );
-
 		$custom_link = '<a href="' . esc_url( $custom_plugin_page ) . '" class="">' . $button_label . '</a>';
 		array_unshift( $links, $custom_link );
 
@@ -66,6 +67,7 @@ class PluginPage {
 	/**
 	 * Render plugin details.
 	 * Callback function to display plugin details in the custom menu page.
+	 * @since 1.0.0
 	 */
 	public function ak_display_plugin_details() {
 		include_once AKILA_PORTFOLIO_PLUGIN_DIR . 'templates/plugin-details.php';
@@ -107,6 +109,7 @@ class PluginPage {
 	/**
 	 * Function to save data to wp-options table via AJAX.
 	 * Handles AJAX request to save custom data to the WordPress options table.
+	 * @since 1.0.0
 	 */
 	public function save_custom_data_ajax() {
 		check_ajax_referer( 'ak_my_plugin_nonce', 'security' );
@@ -123,6 +126,7 @@ class PluginPage {
 	/**
 	 * AJAX function to delete portfolio post.
 	 * Handles AJAX request to delete a portfolio post.
+	 * @since 1.0.0
 	 */
 	public function ak_delete_portfolio_post_callback() {
 		check_ajax_referer( 'ak_my_plugin_nonce', 'nonce' );

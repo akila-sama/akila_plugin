@@ -28,6 +28,7 @@ class Cron {
 	/**
 	 * Add custom cron schedules.
 	 *
+	 * @since 1.0.0
 	 * @param array $schedules The existing schedules.
 	 * @return array The modified schedules.
 	 */
